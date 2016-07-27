@@ -1,10 +1,10 @@
 ﻿/*----------------------------
 	Style Create: 2015.5.28
 	Author: Zero
-	Style Update: 2016年7月5日08:50:30
+	Style Update: 2016年7月27日17:38:51
 	Author: Zero
 	Note: 曼码-LESS代码库
-    version: 0.2.5.3
+    version: 0.2.5.4
 ------------------------------*/
 @charset "utf-8";
 
@@ -17,7 +17,7 @@
 
     /*#region 页面初始化 */
     .initialize(@pageWidth:1200px,@bodyBackground:@c_nc_1){
-        html,body{width:100%;font-size:@defaultFontSize}
+        html,body{width:100%;font-size:@defaultFontSize;color:@mcFontColor}
         html, body, body div, span, object, iframe, 
         h1, h2, h3, h4, h5, h6, p, blockquote, pre, 
         abbr, address, cite, code, del, dfn, em, img, 
@@ -50,7 +50,7 @@
         hr{display:block;height:1px;border:0;border-top:1px solid #ccc;margin:1em 0;padding:0}
         table{border-collapse:collapse;border-spacing:0}
         p{-ms-word-break:break-all;word-break:break-all;text-align:justify}
-        input,textarea{display:block;margin:0;padding:0;border-radius:0;border:none;font-size:100%;font-family:@mcFont;line-height:1.2em;outline:none;-webkit-appearance:none}
+        input,textarea{display:block;margin:0;padding:0;border-radius:0;border:none;font-size:100%;font-family:@mcFont;line-height:1.2em;color:inherit;outline:none;-webkit-appearance:none}
         input::-webkit-input-placeholder{line-height:1.2em}
         .wrap{width:100%;min-width:@pageWidth;}
         .ie7 img{-ms-interpolation-mode:bicubic}
