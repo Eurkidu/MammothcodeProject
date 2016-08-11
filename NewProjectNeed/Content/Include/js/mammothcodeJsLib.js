@@ -33,20 +33,23 @@ Mc.Ajax = function (options) {
         id: new Date().getTime(), //ajax的id
         hasLoading: false, //是否有loading
         confirmTitle: false, //是否有确认框
+        api: true,
         url: "",
         data: {},
         type: "post",
         async: true,
+        processData: true, //序列化数据,formdata的时候需要false
         success: function () { }, //请求成功回调 [resultData, msg, textStatus]
         fail: function () { }, //请求失败回调 [errorMsg, msg, textStatus]
         beforeSend: function () { }
     }, options);
     function ajax() {
         $.ajax({
-            url: Mc.Config.AjaxUrl + settings.url,
+            url: settings.api ? Mc.Config.AjaxUrl + settings.url : settings.url,
             data: settings.data,
             type: settings.type,
             async: settings.async,
+            processData: settings.processData,
             success: function (response, textStatus) {
                 settings.hasLoading && closeWeLoading();
                 Mc.Global.mc_isAjax[settings.id] = false;
@@ -292,8 +295,8 @@ Mc.Ajax = function (options) {
 
 /**
  * 下拉分页V2
- * version 1.0
- * Update 2016年3月12日14:07:32
+ * version 1.1
+ * Update 2016年8月4日16:05:14
  * Author Zero
  */
 Mc.DropDownLoad = function (options) {
@@ -308,6 +311,8 @@ Mc.DropDownLoad = function (options) {
         async: true,
         url: "", //请求的url
         data: {}, //控制器参数
+        onInit: null, //初始化
+        onRefreshPage: null, //刷新分页回调
         noMoreJudge: function (result, loadNumber) { return result.total <= loadNumber }, //没有更多的判断函数 [result:返回值, loadNumber:已加载的个数] [true: 没有更多, false: 还有更多]
         success: function () { },
         beforeSend: function () { },
@@ -315,6 +320,8 @@ Mc.DropDownLoad = function (options) {
     }, options);
 
     var _this = this;
+
+    var $target = null;
 
     //dl 为 dropLoad缩写
     var dl = {
@@ -333,6 +340,7 @@ Mc.DropDownLoad = function (options) {
         init: function (obj, args) {
             return (function () {
                 dl.initData(); //初始化内部属性
+                typeof args.onInit === "function" && args.onInit.call(obj); //onInit回调
                 dl.loadFirst(obj, args); //加载第一页数据
                 dl.bindEvent(obj, args); //绑定触发事件
                 //dl.updateData(obj, args); //初始化参数
@@ -399,6 +407,7 @@ Mc.DropDownLoad = function (options) {
                 async: args.async,
                 success: function (result) {
                     //result = JSON.parse(result);
+                    result.loadingPageIndex = dl.dlData.pageIndex; //注入当前页index
                     //判断是否为返回数据
                     if (returnData) {
                         dl.dlData.isAjax = false;
@@ -433,7 +442,35 @@ Mc.DropDownLoad = function (options) {
     _this.init = function (target, options) {
         options && options.data && (options.data = $.extend(args.data, options.data)); //如果options有data对象先混合data对象
         args = $.extend(args, options);
-        dl.init($(target), args);
+        $target = $(target);
+        dl.init($target, args);
+    }
+    /**
+     * 添加请求参数
+     * @param {} newData 要添加的参数对象
+     * @returns {}
+     */
+    _this.addAjaxData = function(newData) {
+        args.data = $.extend(args.data, newData);
+    }
+    /**
+     * 删除请求参数
+     * @param {} dataKeyArr 要删除的参数的key数组
+     * @returns {}
+     */
+    _this.delAjaxData = function (dataKeyArr) {
+        $.each(dataKeyArr, function (i, val) {
+            delete args.data[val];
+        });
+    }
+    /**
+     * 刷新分页,重新从第一页开始请求
+     * @returns {}
+     */
+    _this.refreshPage = function() {
+        dl.dlData.pageIndex = 1;
+        typeof args.onRefreshPage === "function" && args.onRefreshPage.call($target); //onRefreshPage回调
+        dl.loadFirst($target, args); //重新加载
     }
     /**
      * 使用Mc.dropDownLoad之前对象定义的参数请求数据并通过Deferred对象返回数据
@@ -739,18 +776,24 @@ Mc.DropDownHook = function (options) {
 //=== JQuery 扩展 END ===//
 
 /**
- * 微信风格loading
- * @version 1.0
+ * 外部定义样式的loading,默认微信风格
+ * @version 1.1
  * @author Zero
- * Create Date 2016年4月5日01:39:31
+ * Create Date 2016年8月11日09:54:25
  * @param {} _text 
  * @returns {} 
  */
-Mc.Pop.Loading = function (_text) {
-    var text = _text || '数据加载中';
+Mc.Pop.Loading = function (options) {
+    var settings = $.extend({
+        isUseIdTemplate: false, //是否使用template的id来获取模板,获得loading的html
+        externalTemplate: null, //外部模板html,当isUseIdTemplate为true时传入template模板id
+        externalData: { text: "数据加载中" }, //外部模板使用的数据
+        isShow: false //构造完成后是否直接显示
+    }, options);
+    //默认模板
     function defaultLoadingTemplate() {
         /*
-        <div id="loadingToast" class="weui_loading_toast" style="display:none">
+        <div class="weui_loading_toast">
             <div class="weui_mask_transparent"></div>
             <div class="weui_toast">
                 <div class="weui_loading">
@@ -767,7 +810,7 @@ Mc.Pop.Loading = function (_text) {
                     <div class="weui_loading_leaf weui_loading_leaf_10"></div>
                     <div class="weui_loading_leaf weui_loading_leaf_11"></div>
                 </div>
-                <p class="weui_toast_content">数据加载中</p>
+                <p class="weui_toast_content">{{text}}</p>
             </div>
         </div>
         */
@@ -776,35 +819,57 @@ Mc.Pop.Loading = function (_text) {
     function convertHtmlString(fn) {
         return fn.toString().replace(/^[^\/]+\/\*!?\s?/, "").replace(/\*\/[^\/]+$/, "");
     };
-    var popHtml = convertHtmlString(defaultLoadingTemplate);
-    $("body").append(popHtml);
-    var $popObj = $("#loadingToast");
+
+    var resultHtml, $popDialog; //弹出框对象
+    //是否使用template的id来获取模板,获得loading的html
+    //isUseIdTemplate为true的时候,externalTemplate为模板id
+    //否则externalTemplate为html字符串
+    if (settings.isUseIdTemplate === true) {
+        $popDialog = $(template(settings.externalTemplate, settings.externalData));
+    } else {
+        if (settings.externalTemplate) {
+            resultHtml = settings.externalTemplate;
+        } else {
+            resultHtml = convertHtmlString(defaultLoadingTemplate);
+        }
+        $popDialog = $(template.compile(resultHtml)(settings.externalData));
+    }
+    settings.isShow || $popDialog.hide();
+    $(function() {
+        $("body").append($popDialog);
+    });
     //显示载入弹出层 - 对外接口函数
     this.show = function () {
-        $popObj.fadeIn(200);
+        $popDialog.fadeIn(200);
+    }
+    //隐藏载入弹出层 - 对外接口函数
+    this.hide = function () {
+        $popDialog.fadeOut(200);
     }
     //移除载入弹出层 - 对外接口函数
     this.remove = function () {
-        $popObj.fadeOut(200);
+        $popDialog.remove();
     }
 }
 
 /**
  * [Tip - 提示框:弹出一个操作提示,在tip_live时间(单位毫秒)内存在,然后消失,无回调函数]
  * Auther Zero
- * Update 2015.8.4
- * Version 1.4.0
+ * Update 2016年7月27日18:54:19
+ * Version 1.4.1
  * [txtContent - 提示文本内容 | 默认 ""]
  * [fadeSpeed - 淡入淡出时间(毫秒) | 默认 200]
  * [tipLive - 提示层生存时间(毫秒) | 默认 2000]
+ * [callback - 回调函数]
  * @param {} options
  * @returns {}
  */
 Mc.App.Pop.Tip = function (options) {
     var settings = $.extend({
         txtContent: "", //提示文本内容 | 默认 ""
-        fadeSpeed: 200, //淡入淡出时间(毫秒) | 默认 200
-        tipLive: 2000 //提示层生存时间(毫秒) | 默认 2000
+        fadeSpeed: 100, //淡入淡出时间(毫秒) | 默认 100
+        tipLive: 2000, //提示层生存时间(毫秒) | 默认 2000
+        callback: null
     }, options);
     //把当前时间(从1970.1.1开始的毫秒数)给弹出层作为ID标识
     var popId = new Date().getTime();
@@ -824,6 +889,7 @@ Mc.App.Pop.Tip = function (options) {
         //操作提示延时自动消失
         setTimeout(function () {
             $popObj.fadeOut(settings.fadeSpeed, function () {
+                typeof settings.callback === "function" && settings.callback();
                 $popObj.remove();
             });
         }, settings.tipLive);
@@ -833,8 +899,8 @@ Mc.App.Pop.Tip = function (options) {
 /**
  * [Dialog 对话框]
  * Author: Zero
- * Update: 2015年12月3日15:51:04
- * Version: 0.9
+ * Update: 2016年8月1日23:05:22
+ * Version: 0.9.1
  * [wrapClass - Pop 层外部包裹class | 默认 ""]
  * [popHtml - Pop html | 默认""]
  * [iniCallback - Pop初始化回调函数 | 默认""]
@@ -895,8 +961,10 @@ Mc.Pc.Pop.Dialog = function (options) {
         //Pop html
         html += settings.popHtml;
         //弹出层btn构造
-        if (settings.leftBtn) html += "<div id='dialog_L_" + popId + "' class='btn " + settings.leftBtnClass + "'>" + settings.leftBtnContent + "</div>";
-        if (settings.rightBtn) html += "<div id='dialog_R_" + popId + "' class='btn " + settings.rightBtnClass + "'>" + settings.rightBtnContent + "</div>";
+        if (settings.leftBtn || settings.rightBtn) html += "<div class='btn-wrap'>";
+        if (settings.leftBtn) html += "<div id='dialog_L_" + popId + "' class='btn" + settings.leftBtnClass + "'>" + settings.leftBtnContent + "</div>";
+        if (settings.rightBtn) html += "<div id='dialog_R_" + popId + "' class='btn" + settings.rightBtnClass + "'>" + settings.rightBtnContent + "</div>";
+        if (settings.leftBtn || settings.rightBtn) html += "</div>";        
         //弹出层bg构造
         if (settings.hasBg) html += "</div><div id='bg_" + popId + "' class='pop-bg'></div>";
         html += "</div>";
@@ -1765,8 +1833,8 @@ Mc.Util.selectBox = function (options) {
 /**
  * [工具函数-特效变化]
  * [Author: zero]
- * [Version: 1.3]
- * [Update: 2015年12月5日16:07:35]
+ * [Version: 1.4]
+ * [Update: 2016年8月11日09:50:19]
  * [target - 特效变化父级jQ选择器(通过事件代理触发) | 默认 "document"]
  * [event - 触发事件 | 默认click | 可选项 {
  *     click:点击触发,
@@ -1797,6 +1865,7 @@ Mc.Util.EffectChange = function (options) {
         onlyActive: false, //同一时间只能有一个激活 | 默认 false | Tip:如果实现单页切换,此值应为true
         lessOneActive: false, //至少有一个处于激活状态 | 默认 false | Tip:如果实现单页切换,此值应为true
         changeCallBack: null, //切换改变的回调函数 | 默认 null
+        changedCallBack: null,
         effectSpeed: 200 //特效变化时间(毫秒) | 默认 200
     }, options);
     //特效函数列表
@@ -1895,6 +1964,7 @@ Mc.Util.EffectChange = function (options) {
                     //如果当前项处于激活状态,并且符合条件1,2中任意一条 --> 冻结当前项
                     $this.removeClass("mc-active active"); //冻结当前项
                     effectEnd($target); //冻结当前项目标
+                    typeof settings.changedCallBack === "function" && settings.changedCallBack.call($this, $target);
                 }
             } else if (!$this.hasClass("mc-active")) {
                 //回调函数为空->关闭||回调函数不为空判断是否为函数->true->执行函数->函数返回值为false不执行操作
@@ -1907,6 +1977,7 @@ Mc.Util.EffectChange = function (options) {
                     }
                     $this.addClass("mc-active active"); //激活当前项
                     effectStart($target); //激活当前项目标
+                    typeof settings.changedCallBack === "function" && settings.changedCallBack.call($this, $target);
                 }
             }
         });
