@@ -10,11 +10,6 @@
 //颜色√
 @c_mc: #fdb056; //主色
 
-//汤井福
-//tjf
-
-//何承林
-//hcl
 
 //中性色(白->黑) nc <-> NeutralColor√
 @c_nc_1: #ffffff; //Default
@@ -72,9 +67,9 @@
         #McBaseLib > .setScrollbar; //更改滚动条样式
     }*/
     #McBaseLib > .initialize(@minWidth,@c_nc_1); //样式初始化代码
-    #McLayoutLib > .baseLayout; //基础布局
     #McLayoutLib > .pcLayout; //主站布局
     #McLayoutLib > .appLayout; //微站布局
+    #McLayoutLib > .baseLayout; //基础布局
     //隐藏
     .hide {
         display: none;

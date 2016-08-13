@@ -1,10 +1,10 @@
 ﻿/*----------------------------
 	Style Create: 2015.5.28
 	Author: Zero
-	Style Update: 2016年7月27日17:38:51
+	Style Update: 2016年8月2日14:26:05
 	Author: Zero
 	Note: 曼码-LESS代码库
-    version: 0.2.5.4
+    version: 0.2.5.5
 ------------------------------*/
 @charset "utf-8";
 
@@ -26,18 +26,18 @@
         form, label, legend, table, caption, tbody, 
         tfoot, thead, tr, th, td, article, aside, 
         figure, footer, header, menu, nav, section, 
-        time, mark, audio, video, details, summary{
+        time, mark, audio, video, details, summary,button{
             margin: 0;
 	        padding: 0;
 	        border: 0;
-	        font-size: 100%;
+	        //font-size: 100%;
             font-family: @mcFont;
 	        vertical-align: baseline;
 	        background: transparent;
             -webkit-tap-highlight-color: transparent;
             -webkit-text-size-adjust:none;
         }
-        html{-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box}
+        html{#McBaseLib>.borderBox}
         *,*:before,*:after{-moz-box-sizing:inherit;-webkit-box-sizing:inherit;box-sizing:inherit}
         body{background:@bodyBackground;overflow-x:hidden} //body 背景色
         article, aside, figure, footer, header, nav, section, details, summary {display: block;}
@@ -180,6 +180,12 @@
     /*#endregion */
 
     /*#region 布局 */
+    //盒子模型
+    .borderBox(){
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+    }
     //浮动
     .floatLeft(){
     //左浮
@@ -358,18 +364,6 @@
 
 //网页布局Lib
 #McLayoutLib{
-    .baseLayout(){
-    //基础布局
-        .lfp{#McBaseLib>.floatLeft} //左浮 | (命名解释 left-float-part)
-        .rfp{#McBaseLib>.floatRight} //右浮 | (命名解释 right-float-part)
-        .cf{#McBaseLib>.cleanFloat} //清除浮动(不常用,仅当after伪类被占用的时候使用) | (命名解释 clean-float)
-        .cfa:after{display:block;content:"";#McBaseLib>.cleanFloat} //通过after伪类来清除浮动 | (命名解释 clean-float-after)
-        .tb{display:table !important} //表格布局父级 | (命名解释 table-block)
-        .tc{display:table-cell;vertical-align:top} //表格布局子级 | (命名解释 table-cell)
-        .txtl{text-align:left} //文字居左 | (命名解释 text-left)
-        .txtr{text-align:right} //文字居右 | (命名解释 text-right)
-        .txtc{text-align:center} //文字居中 | (命名解释 text-center)
-    }
     .pcLayout(){
     //主站布局
         .item,.field{display:block;font-size:@defaultFontSize;} //盒子布局
@@ -386,5 +380,17 @@
         .bf1{#McBaseLib>.boxFlex(1)} //横向布局-所占比重1 | (命名解释 box-flex)
         .bf2{#McBaseLib>.boxFlex(2)} //横向布局-所占比重2
         .bf3{#McBaseLib>.boxFlex(3)} //横向布局-所占比重3
+    }
+    .baseLayout(){
+    //基础布局
+        .lfp{#McBaseLib>.floatLeft} //左浮 | (命名解释 left-float-part)
+        .rfp{#McBaseLib>.floatRight} //右浮 | (命名解释 right-float-part)
+        .cf{#McBaseLib>.cleanFloat} //清除浮动(不常用,仅当after伪类被占用的时候使用) | (命名解释 clean-float)
+        .cfa:after{display:block;content:"";#McBaseLib>.cleanFloat} //通过after伪类来清除浮动 | (命名解释 clean-float-after)
+        .tb{display:table;table-layout:fixed} //表格布局父级 | (命名解释 table-block)
+        .tc{display:table-cell;vertical-align:top} //表格布局子级 | (命名解释 table-cell)
+        .txtl{text-align:left} //文字居左 | (命名解释 text-left)
+        .txtr{text-align:right} //文字居右 | (命名解释 text-right)
+        .txtc{text-align:center} //文字居中 | (命名解释 text-center)
     }
 }
