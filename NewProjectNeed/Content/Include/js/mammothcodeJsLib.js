@@ -51,7 +51,7 @@ Mc.Ajax = function (options) {
             async: settings.async,
             processData: settings.processData,
             success: function (response, textStatus) {
-            	settings.api || response = JSON.parse(response);
+            	settings.api || (response = JSON.parse(response));
                 settings.hasLoading && closeWeLoading();
                 Mc.Global.mc_isAjax[settings.id] = false;
                 if (response.issuccess) { //返回数据
