@@ -1,0 +1,205 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <meta name="wap-font-scale" content="no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=no" />
+    <title>@ViewBag.Title</title>
+    <!--主样式文件-->
+    <link href="/Content/Include/css/Main.min.css" rel="stylesheet" />
+    <!--JQuery-->
+    <script src="/Content/Include/js/jquery-1.8.3.min.js"></script>
+    <!-- underscore -->
+    <script src="/Content/Include/js/underscore-min.js"></script>
+    <!-- json2 -->
+    <script src="~/Content/Include/js/json2.js"></script>
+    <!-- artTemplate -->
+    <script src="/Content/Include/js/template.js"></script>
+    <!-- 曼码JsLib -->
+    <script src="/Content/Include/js/mammothcodeJsLib.min.js"></script>
+    <!-- Mc Verify -->
+    <script src="/Content/Include/js/mc.verify.js"></script>
+    <!-- picker css -->
+    <link href="/Content/Include/js/lib/picker/css/mui.picker.all.css" rel="stylesheet" />
+    <!-- picker js -->
+    <script src="/Content/Include/js/lib/picker/mui.min.js"></script>
+    <script src="/Content/Include/js/lib/picker/js/mui.picker.all.js"></script>
+    <script src="/Content/Include/js/lib/picker/city.data-3.min.js"></script>
+    <!-- Common Js -->
+    <script src="/Content/Include/js/Common.min.js"></script>
+    <!-- mc.upload -->
+    <link href="/Content/Include/js/lib/mc.upload/webuploader.css" rel="stylesheet" />
+    <script src="/Content/Include/js/lib/mc.upload/webuploader-0.1.5/webuploader.html5only.min.js"></script>
+    <script src="/Content/Include/js/lib/mc.upload/mc.uploader.js"></script>
+    <!-- swiper -->
+    <link href="/Content/Include/css/swiper-3.3.1.min.css" rel="stylesheet" />
+    <script src="/Content/Include/js/swiper-3.3.1.jquery.min.js"></script>
+    <!-- lazyload -->
+    @*<script src="/Content/include/js/jquery.lazyload.min.js"></script>*@
+    <script type="text/javascript">
+        //页面返回按钮函数钩子
+        var gPageReturnHook = null;
+        //返回
+        function goBack() {
+            //IE 的判断为 history.length > 0
+            //Firefox, Safari, Chrome, webkit 的判断为 history.length > 1
+            //微信中实测为 history.length > 1
+            if (history.length > 1) {
+                history.go(-1)
+            } else {
+                urlJump("/")
+            }
+        }
+        //点击返回按钮
+        function doBack() {
+            if (typeof gPageReturnHook === "function") {
+                gPageReturnHook();
+            } else {
+                goBack();
+            }
+        }
+    </script>
+    <style id="html_style"></style>
+    <script type="text/javascript">
+        (calMinHeight = function () {
+            var wh = $(window).height();
+            var styleString = "";
+            styleString += ".min-height-cotar{min-height:" + wh + "px}";
+            styleString += ".height-cotar{height:" + wh + "px}";
+            var htmlStyle = $("#html_style")[0];
+            if ('styleSheet' in htmlStyle) {
+                htmlStyle.setAttribute('type', 'text/css');
+                htmlStyle.styleSheet.cssText = styleString;
+            } else {
+                htmlStyle.innerHTML = styleString;
+            }
+        })();
+        $(window).on("resize", function () {
+            calMinHeight();
+        });
+    </script>
+</head>
+<body id="body" class="no-scroll height-cotar">
+    <!-- pageLoading -->
+    <div id="mc_page_loading" class="page-loading-wrap height-cotar" ontouchstart="return false;">
+        <div class="vm-cotar">
+            <div class="preloader-wrapper active">
+                <div class="spinner-layer spinner-blue">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div><div class="gap-patch">
+                        <div class="circle"></div>
+                    </div><div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+                <div class="spinner-layer spinner-red">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div><div class="gap-patch">
+                        <div class="circle"></div>
+                    </div><div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+                <div class="spinner-layer spinner-yellow">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div><div class="gap-patch">
+                        <div class="circle"></div>
+                    </div><div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+                <div class="spinner-layer spinner-green">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div><div class="gap-patch">
+                        <div class="circle"></div>
+                    </div><div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-loading-txt">页面加载中..</div>
+        </div>
+    </div>
+    <!-- 页面加载失败 -->
+    <div id="mc_page_fail" class="page-load-fail hf">
+        <div class="vm-cotar fp">
+            <div class="pic-wrap">
+                <img src="/Content/Include/img/pic-page-error.png" />
+            </div>
+            <div class="txt-wrap">
+                <div class="h1">你要的页面打不开啦~</div>
+                <div class="h2">错误代码：500</div>
+            </div>
+            <div class="tool-bar">
+                <div class="btn -state2" onclick="urlJump('/', true)">返回首页</div>
+                <div class="btn" onclick="reloadUrl()">重新加载</div>
+            </div>
+        </div>
+    </div>
+    @if (ViewBag.noHeader != true)
+    {
+        <div id="header" class="header fbox">
+            <div class="tool-btn left-tool">
+                @if (ViewBag.ReturnBackBtn == true)
+                {
+                    <i class="ic-return" onclick="doBack()"></i>
+                }
+            </div>
+            <div class="center-box bf1">
+                <div class="title"><span>@ViewBag.HeadTitle</span></div>
+            </div>
+            <div class="tool-btn right-tool">
+                <div class="txt-btn"></div>
+                @*<a href="/" class="ic-home"></a>*@
+            </div>
+        </div>
+    }
+    <div class="wrap">
+        @RenderBody()
+    </div>
+    @if (ViewBag.BackToTop == true)
+    {
+        <div id="back_to_top" class="back-to-top ic-back-top" onclick="backToTop()"></div>
+        <script type="text/javascript">
+            $(window).on("scroll", function () {
+                if ($(window).scrollTop() > 200) {
+                    $("#back_to_top").addClass("active");
+                } else {
+                    $("#back_to_top").removeClass("active");
+                }
+            });
+            function backToTop() {
+                $("html,body").animate({ scrollTop: 0 }, 500);
+            }
+        </script>
+    }
+    <!-- 提示分享弹出层 -->
+    <div id="share_pop" class="share-pop hide" onclick="hideSharePop()"><img src="/Content/Include/img/pic-share-pop.png"></div>
+    <script>
+        ; (function () {
+            var $sharePop = $("#share_pop")
+            window.showSharePop = function () {
+                $sharePop.removeClass("hide")
+                setTimeout(function () {
+                    $sharePop.addClass("active")
+                }, 50)
+            }
+            window.hideSharePop = function () {
+                $sharePop.removeClass("active")
+                setTimeout(function () {
+                    $sharePop.addClass("hide")
+                }, 350)
+            }
+        })();
+    </script>
+</body>
+</html>

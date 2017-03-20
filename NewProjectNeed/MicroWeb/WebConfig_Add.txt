@@ -1,0 +1,23 @@
+<!-- system.web -->
+<customErrors mode="On" redirectMode="ResponseRewrite" defaultRedirect="~/Error500.aspx">
+	<error statusCode="404" redirect="~/Error404.aspx"/>
+	<error statusCode="500" redirect="~/Error500.aspx"/>
+</customErrors>
+
+<!-- system.webServer -->
+<httpErrors errorMode="DetailedLocalOnly">
+	<remove statusCode="404"/>
+	<error statusCode="404" path="Error404.html" responseMode="File"/>
+	<remove statusCode="500"/>
+	<error statusCode="500" path="Error500.html" responseMode="File"/>
+</httpErrors>
+
+<!-- json 冲突可能用到 -->
+<runtime>
+	<assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+	  <dependentAssembly>
+	    <assemblyIdentity name="Newtonsoft.Json" publicKeyToken="30ad4fe6b2a6aeed" culture="neutral" />
+	    <bindingRedirect oldVersion="0.0.0.0-6.0.0.0" newVersion="6.0.0.0" />
+	  </dependentAssembly>
+	</assemblyBinding>
+</runtime>

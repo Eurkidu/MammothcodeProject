@@ -1,0 +1,493 @@
+/*----------------------------
+    Style Create: 2017年1月16日
+    Author: Zero
+    Style Update: 2017年1月16日
+    Author: Zero
+------------------------------*/
+
+//引用代码库
+@import "MammothcodeCoreLib.less";
+#McBaseLib;
+
+//页面初始化
+.mc_initialize;
+
+//=== 公共 Common START ===//
+/*#region 图标 */
+
+/*#endregion */
+
+/*#region 常用组件 */
+//轮播图
+.swiper-container{
+    font-size: 0;
+    .pic-wrap{
+        img{
+            width: 100%;
+        }
+    }
+}
+//scroll-box
+.scroll-box {
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+//input
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+}
+//按钮
+.btn{
+    text-align: center;
+    cursor: pointer;
+}
+//表单按钮
+.form-btn-wrap{
+    /*display: block;*/
+    padding: 0 40px;
+    .btn{
+        display: block;
+        height: 40px;
+        line-height: 40px;
+        background: @c_mc;
+        border-radius: 3px;
+        color: @c_nc_60;
+        font-size: 18px;
+        #McBaseLib > .transition(background);
+        &:last-child{
+            margin-left: 20px;
+        }
+        &:first-child{
+            margin-left: 0;
+        }
+        &.disable{
+            background: @c_nc_5;
+            color: @c_nc_1;
+        }
+        &.-state2{
+            background: @c_xjy_02;
+            color: @c_nc_1;
+        }
+    }
+    .btn-tip{
+        margin: 7px 0;
+        text-align: right;
+        &.-state2{
+            text-align: center;
+        }
+        span,a{
+            display: inline-block;
+            font-size: 14px;
+            color: @c_nc_6;
+        }
+    }
+}
+//用户头像
+.user-head-wrap
+,.public-auto-bg
+{
+    background-size: cover;
+    background-color: @c_nc_20;
+    background-position: center;
+    overflow: hidden;
+    &.-round{
+        border-radius: 5px;
+    }
+    &.-circle{
+        border-radius: 50%;
+    }
+    img{
+        display: none;
+    }
+}
+//跟图标同行元素
+.txt-inline{
+    display: inline-block;
+    vertical-align: middle;
+}
+//已无更多
+.no-more-cotar{
+    padding: 7px 15px 20px 15px;
+    .hr-line{
+        display: block;
+        width: 100%;
+        height: 1px;
+        margin-top: 12px;
+        background: @c_nc_3;
+    }
+    .txt{
+        height: 25px;
+        line-height: 25px;
+        padding: 0 15px;
+        font-size: 14px;
+        color: @c_nc_50;
+    }
+}
+//暂无数据
+.nodata-cotar{
+    padding: 40px 0;
+    text-align: center;
+    &.-small{
+        padding: 5px 0;
+        .pic-cotar{
+            width: 80px;
+            margin: 0 10px;
+        }
+    }
+    &.-middle{
+        .pic-cotar{
+            margin: 0 20px;
+        }
+    }
+    .pic-cotar{
+        display: inline-block;
+        width: 100px;
+        margin-bottom: 15px;
+        img{
+            width: 100%;
+        }
+    }
+    .txt-cotar{
+        font-size: 16px;
+    }
+    .form-btn-wrap{
+        margin: 20px 0;
+    }
+}
+//提示分享弹出层
+.share-pop{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    #McBaseLib > .transition(opacity);
+    opacity: 0;
+    padding: 10px;
+    background-color: rgba(0,0,0,.4);
+    text-align: right;
+    z-index: 999;
+    &.active{
+        opacity: 1;
+    }
+    img{
+        width: 583/2px;
+    }
+}
+/*#endregion */
+
+/*#region 常用布局*/
+//header 偏移
+.wrap{
+    padding-top: 44px;
+}
+
+/*#region header*/
+.header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 7px 0;
+    background: @c_mc;
+    z-index: 999;
+    &.-static{
+        position: static;
+    }
+    .tool-btn {
+        width: 75px;
+        height: 30px;
+        padding: 0 5px;
+        text-align:left;
+        &.-wide-margin{
+            margin-right: 25px;
+        }
+        &.-wide{
+            width: 70px;
+            text-align: right;
+        }
+        i,a {
+            display: block;
+            width: 100%;
+            height: 100%;
+            text-align: left;
+            cursor: pointer;
+            .mc_peVm;
+            color: @c_nc_1;
+        }
+        .txt-icon{
+            display: block;
+            width: 100%;
+            span{
+                padding-right: 5px;
+                font-size: 16px;
+            }
+            span,i{
+                display: inline-block;
+                width: auto;
+                vertical-align: middle;
+            }
+        }
+    }
+    .center-box {
+        //padding-right: 15px;
+        text-align: center;
+        //标题
+        .title {
+            height: 30px;
+            line-height: 30px;
+            padding: 0 5px;
+            font-size: 18px;
+            color: @c_nc_1;
+            //color: @c_nc_60;
+            .mc_txtOverEllipsis;
+            span {
+                line-height: 1em;
+            }
+        }
+    }
+    .left-tool{
+        padding-left: 15px;
+        text-align:left;
+    }
+    .right-tool {
+        position: relative;
+        .txt-btn{
+            width: 100%;
+            line-height: 30px;
+            font-size: 17px;
+            color: @c_nc_1;
+            text-align: center;
+        }
+        i{
+        }
+    }
+    .logo-wrap{
+        height: 100%;
+        font-size: 0;
+        text-align: center;
+        .mc_peVm;
+        img{
+            display: inline-block;
+            vertical-align: middle;
+        }
+    }
+}
+/*#endregion */
+
+/*#region mui*/
+//mui选择样式
+.mui-backdrop {
+    position: fixed;
+    z-index: 998;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0,0,0,.3);
+}
+.mui-poppicker,
+.mui-dtpicker{
+    #McBaseLib > .transformX(120%) !important;
+    &.mui-active{
+        #McBaseLib > .transformX(0) !important;
+    }
+}
+.mui-poppicker-header,
+.mui-dtpicker-header{
+    background: @c_nc_1;
+    .mui-btn{
+        line-height: 20px;
+        padding: 0 15px;
+        font-size: 16px !important;
+        margin-bottom: 0;
+        cursor: pointer;
+        color: @c_nc_60;
+        border: 1px solid @c_nc_1;
+        border-radius: 3px;
+        background-color: @c_nc_1;
+    }
+    .mui-btn-blue, .mui-btn-primary{
+        color: @c_xjy_01;
+        /*border: 1px solid @c_mc;
+        background-color: @c_mc;*/
+    }
+}
+.mui-poppicker-title,
+.mui-dtpicker-title{
+    h5{
+        background: @c_nc_1;
+        border-top: 1px solid @c_nc_30;
+        border-bottom: 1px solid @c_nc_30;
+    }
+}
+.mui-poppicker-body,
+.mui-dtpicker-body{
+    .mui-picker{
+        background: @c_nc_1;
+    }
+    .mui-pciker-list li{
+        font-family: @configFont;
+    }
+    .mui-pciker-list li.highlight{
+        color: @c_xjy_01;
+    }
+}
+/*#endregion */
+
+/*#region 个人中心,账户安全列表*/
+.uc-nav-list{
+    margin: 15px 0;
+    >.item{
+        position: relative;
+        line-height: 45px;
+        padding-left: 10px;
+        padding-right: 40px;
+        border-bottom: 1px solid @c_nc_30;
+        background: @c_nc_1;
+        &:first-child{
+            border-top: 1px solid @c_nc_3;
+        }
+        &:last-child{
+            border-bottom-color: @c_nc_3;
+        }
+        &:after{
+            top: 50%;
+            right: 10px;
+            margin-top: -8px;
+        }
+        >span{
+            display: block;
+            padding: 0 10px;
+            vertical-align: middle;
+            font-size: 16px;
+            .mc_txtOverEllipsis;
+        }
+        >em{
+            display: block;
+            font-size: 16px;
+            .mc_txtOverEllipsis;
+        }
+    }
+}
+/*#endregion */
+
+/*#region 弹出层*/
+//确认框
+.confirm-pop-cotar{
+    &.-state2{
+        .content{
+            padding: 10px 20px;
+            p{
+                display: inline-block;
+                max-width: 100%;
+            }
+        }
+        .btn{
+            width: 100%;
+            border-right: none;
+        }
+    }
+    .title{
+        text-align: center;
+    }
+    .content{
+        line-height: 1.8em;
+        padding: 10px 15px;
+        color: @c_nc_6;
+        font-size: 14px;
+        max-height: 400px;
+        overflow: auto;
+    }
+}
+//通用确认框,请求confim的确认框
+.mc-confirm-pop-cotar{
+    width: 220px;
+    border-radius: 5px;
+    color: @c_nc_7;
+    overflow: hidden;
+    .mc-pop-content{
+        padding: 35px 15px 20px;
+        font-size: 18px;
+    }
+    .btn-wrap{
+        margin-top: 15px;
+        font-size: 0;
+        border-top: 1px solid @c_nc_30;
+        .btn{
+            display: inline-block;
+            width: 50%;
+            line-height: 50px;
+            font-size: 16px;
+            text-align: center;
+            &:first-child{
+                color: @c_nc_60;
+                border-right: 1px solid @c_nc_30;
+            }
+        }
+    }
+}
+/*#endregion */
+
+/*#region 通用横划下拉加载*/
+.mc-swiper-list-cotar {
+    height: 100%;
+    -webkit-box-orient: vertical;
+    box-orient: vertical;
+    //头部切换tabs
+    .mc-top-tabs {
+        background: @c_nc_1;
+        z-index: 9;
+        .mc_boxShadow;
+        .item {
+            width: auto;
+            padding: 0 15px;
+            color: @c_nc_60;
+            text-align: center;
+            &.active {
+                color: @c_xjy_02;
+                span {
+                    border-bottom-color: @c_xjy_02;
+                }
+            }
+            span {
+                display: inline-block;
+                height: 35px;
+                line-height: 33px;
+                padding: 0 10px;
+                border-bottom: 2px solid @c_nc_1;
+            }
+        }
+    }
+    //订单列表(商城)
+    .mc-list-field {
+        #McBaseLib > .borderBox;
+        font-size: 14px;
+    }
+}
+/*#endregion */
+
+//底部固定栏
+.bottom-fixed-bar{
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    line-height: 50px;
+    background-color:@c_mc;
+    color: @c_nc_1;
+    .item{
+        width: 100%;
+        text-align: center;
+        font-size: 12px;
+        span{
+            padding-left: 5px;
+        }
+    }
+}
+/*#endregion */
+/*#endregion */
+//=== 公共 Common END ===//
+
+
