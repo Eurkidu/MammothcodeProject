@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script type="text/javascript" src="http://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+<script language="javascript" type="text/javascript" src="js/mobiscroll.custom-3.0.0-beta2.min.js">  
+</script> 
+    <link href="css/mobiscroll.custom-3.0.0-beta2.min.css" rel="stylesheet" />
+
+</head>
+<body>
+<input id="calendar" />
+<input id="date" />
+<input id="range"/>
+<input id="timer"/>
+<ul id="demo" class="md-lv-checklist" style="display:none" mbsc-enhance>
+    <li><input type="checkbox" data-role="none" checked />Do the laundry</li>
+    <li><input type="checkbox" data-role="none" />Check out new Mobiscroll features</li>
+    <li><input type="checkbox" data-role="none" checked />Don't forget mom's birthday!</li>
+    <li><input type="checkbox" data-role="none" />Update my app with the latest Mobiscroll</li>
+    <li><input type="checkbox" data-role="none" />Buy new shoes</li>
+    <li><input type="checkbox" data-role="none" />Need ketchup for pizza</li>
+</ul>
+<div id="demo_note" class="md-demo-note demo-note" style="display:none;">
+    Whooa, list is empty. Tap here to refresh!  
+    <span class="mbsc-ic mbsc-ic-loop2"></span>
+</div>
+
+<ul id="demo1" class="md-mailbox" style="display:none">
+    <li>
+        <div class="md-mail-icon" style="background:#4c66a4;">F</div>
+        <div class="md-mail-date">Nov 4</div>
+        <div class="md-mail-from">Facebook</div>
+        <div class="md-mail-subject">Your weekly page update</div>
+    </li>
+    <li>
+        <div class="md-mail-icon" style="background:#287BBC;">L</div>
+        <div class="md-mail-date">Nov 1</div>
+        <div class="md-mail-from">LinkedIn</div>
+        <div class="md-mail-subject">Michael has endorsed you!</div>
+    </li>
+    <li>
+        <div class="md-mail-icon" style="background:#5185a8;">M</div>
+        <div class="md-mail-date">Oct 31</div>
+        <div class="md-mail-from">Mobiscroll</div>
+        <div class="md-mail-subject">October update</div>
+    </li>
+    <li>
+        <div class="md-mail-icon" style="background:#1a3665;">P</div>
+        <div class="md-mail-date">Oct 31</div>
+        <div class="md-mail-from">PayPal</div>
+        <div class="md-mail-subject"> Stay fashionable in the cold with PayPal</div>
+    </li>
+    <li>
+        <div class="md-mail-icon" style="background:#dd4b39;">G</div>
+        <div class="md-mail-date">Oct 28</div>
+        <div class="md-mail-from">Google+</div>
+        <div class="md-mail-subject">John Doe added you back on Google+</div>
+    </li>
+    <li>
+        <div class="md-mail-icon" style="background:#5185a8;">M</div>
+        <div class="md-mail-date">Oct 27</div>
+        <div class="md-mail-from">Mobiscroll</div>
+        <div class="md-mail-subject">Password reset information</div>
+    </li>
+</ul>
+
+	<script>
+	mobiscroll.setDefaults({
+    theme: 'ios',
+    lang: 'zh'
+});
+		$(function () {
+			var now = new Date(),
+        year = now.getFullYear(),
+        month = now.getMonth();
+    // Create a calendar with default settings
+    $("#calendar").mobiscroll().calendar({
+	  	 theme: 'mobiscroll',
+        display: 'bottom',
+        counter: true,
+        select: 'multiple',
+        defaultValue: [new Date(year, month, 1), new Date(year, month, 2), new Date(year, month, 10)]
+    });
+    $("#date").mobiscroll().date({ 
+        theme: 'ios', 
+        display: 'bottom'
+    });
+    $("#range").mobiscroll().range({ theme: 'mobiscroll' });   
+    $("#timer").mobiscroll().timer({ 
+        theme: 'ios',
+        display: 'bottom' 
+    });
+});
+// Use the settings object to change the theme
+mobiscroll.settings = {
+    theme: 'mobiscroll'
+};
+
+$(function () {
+    $('.md-slider-score').change(function (ev) {
+        $('.md-slider-cont .md-score').text(this.value);
+    });
+})
+$(function () {
+    $('#demo').mobiscroll().listview({
+        theme: 'mobiscroll',
+        sortable: {
+            handle: 'left'
+        },
+        stages: {
+            left: [{
+                key: 'stage1',
+                icon: 'plus',
+                color: '#31c6e7',
+                text: 'Add',
+                action: function (event, inst) {
+                    inst.add(null, '<input type="checkbox" data-role="none" /> New Todo', event.index + 1);
+                }
+            }],
+            right: [{
+                key: 'stage2',
+                color: '#009688',
+                text: 'Remove',
+                icon: 'remove',
+                action: function (event, inst) {
+                    inst.remove(event.target);
+                    return false;
+                }
+            }]
+        }
+
+    });
+
+});
+
+$(function () {
+    $('#demo1').mobiscroll().listview({
+        theme: 'mobiscroll',
+        stages: [{
+            percent: -30,
+            action: remove,
+            undo: true
+        }, {
+            percent: 30,
+            action: remove,
+            undo: true
+        }, ],
+        onItemAdd: function () {
+            $('#demo_note').hide();
+        },
+        onItemRemove: function () {
+            if ($('li', this).length < 2) {
+                $('#demo_note').show();
+            }
+        }
+    });
+
+    $('#demo_note').click(function () {
+        window.location.reload();
+    });
+
+    function remove(ev, inst) {
+        inst.remove(ev.target);
+
+        return false;
+    }
+});
+	</script>
+</body>
+</html>

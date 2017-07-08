@@ -2039,7 +2039,7 @@ Mc.Util.dropMenuList = function (navList, oneSildeDown) {
  */
 Mc.Util.IniFixCountDown = function (options) {
     var settings = $.extend({
-        target: "#verifity", //jQuery选择器字符串
+        target: "#verify", //jQuery选择器字符串
         fixTime: 60, //时间
         timeFormat: "%d", //计时格式化字符串
         startCallback: null, //开始倒计时回调函数

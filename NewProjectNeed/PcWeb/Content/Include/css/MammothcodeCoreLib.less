@@ -17,7 +17,7 @@
 
     /*#region 页面初始化 */
     .initialize(@pageWidth:1200px,@bodyBackground:@c_nc_1){
-        html,body{width:100%;font-size:@defaultFontSize;color:@mcFontColor}
+        html,body{width:100%;font-size:@defaultFontSize;color:@mcFontColor;min-width:@pageWidth}
         html, body, body div, span, object, iframe, 
         h1, h2, h3, h4, h5, h6, p, blockquote, pre, 
         abbr, address, cite, code, del, dfn, em, img, 
@@ -52,7 +52,7 @@
         p{-ms-word-break:break-all;word-break:break-all;text-align:justify}
         input,textarea{display:block;margin:0;padding:0;border-radius:0;border:none;font-size:100%;font-family:@mcFont;line-height:1.2em;color:inherit;outline:none;-webkit-appearance:none}
         input::-webkit-input-placeholder{line-height:1.2em}
-        .wrap{width:100%;min-width:@pageWidth;}
+        .wrap{width:100%;min-width:@pageWidth;overflow:hidden}
         .ie7 img{-ms-interpolation-mode:bicubic}
     }
 

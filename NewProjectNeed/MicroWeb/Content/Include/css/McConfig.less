@@ -31,34 +31,14 @@
 @c_nc_80: #1b1b1b; //
 @c_nc_9: #080808; //Default
 //默认字体
-@configFont: 'Helvetica Neue', Helvetica, 'Hiragino Sans GB', 'Segoe UI', 'Microsoft Yahei', Tahoma, Arial, STHeiti, sans-serif;
-@configFont2: "San Francisco Display", "Heiti SC", STHeiti, "Microsoft Yahei", Arial, sans-serif;
-//字体大小
-@configSize12: 12px;
-@configSize14: 14px;
-@configSize16: 16px;
-@configSize18: 18px;
-@configSize20: 20px;
-@configSize22: 22px;
-@configSize24: 24px;
-@configSize26: 26px;
-@configSize28: 28px;
-@configSize30: 30px;
-@configSize32: 32px;
-@configSize34: 34px;
-@configSize36: 36px;
+/*@configFont: 'Helvetica Neue', Helvetica, 'Hiragino Sans GB', 'Segoe UI', 'Microsoft Yahei', Tahoma, Arial, STHeiti, sans-serif;*/
+@configFont: "San Francisco Display", "Heiti SC", STHeiti, "Microsoft Yahei", Arial, sans-serif;
 
 //MammothcodeCorelib变量配置
 #McCoreLibConfig{
 	@mcImgUrl: @configImgUrl; //图片路径
 	@mcFont: @configFont; //字体
     @mcFontColor: @c_nc_7; //字体颜色
-	@mcSize12: @configSize12; //字体大小
-	@mcSize14: @configSize14;
-	@mcSize16: @configSize16;
-	@mcSize18: @configSize18;
-	@mcSize20: @configSize20;
-	@mcSize24: @configSize24;
 }
 
 //==== 对外引用 START ====//
@@ -77,6 +57,9 @@
     //隐藏
     .hide {
         display: none;
+    }
+    .ihide {
+        display: none !important;
     }
     //禁止滚动
     .no-scroll{
@@ -133,6 +116,9 @@
 
     //文编编辑器内容
     .mc-edit-cotar{
+        width: 100%;
+        overflow: hidden;
+        #McBaseLib > .borderBox;
         .edui-container{
             max-width: 1000px;
         }
@@ -144,6 +130,10 @@
         strong,b{font-weight:bold} //还原初始化
         sup{vertical-align:super;font-size:12px;line-height: 1em;} //上标
         sub{vertical-align:sub;font-size:12px;line-height: 1em;} //下标
+        // 移动端
+        table{
+            width: 100% !important;
+        }
     }
     
     /*#region 弹窗 */
@@ -168,15 +158,6 @@
                 cursor: pointer;
             }
         }
-        /*.pop-bg{
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            z-index: -1;
-            .mc_bgRp("pixel_black_80.png");
-        }*/
         .pop-bg{
             position: absolute;
             top: 0;
@@ -263,715 +244,20 @@
                 border: 1px solid @c_xjy_01;
                 color: @c_xjy_01;
                 font-size: 14px;
+                background-color: transparent;
                 &.-state2{
-                    background: @c_xjy_01;
+                    background-color: @c_xjy_01;
                     color: @c_nc_1;
                 }
             }
         }
     }
 
-    /*#region 微信风格loading*/
-    .weui_mask {
-        position: fixed;
-        z-index: 1;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        background: rgba(0, 0, 0, .6);
-    }
+    //微信风格loading
+    #McBaseLib > .loadingWeChatStyle();
 
-    .weui_mask_transparent {
-        position: fixed;
-        z-index: 1000;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        z-index:9999;
-    }
-
-    .weui_mask_transition{
-        display: none;
-        position: fixed;
-        z-index: 1;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        background: rgba(0,0,0,0);
-        transition:background .3s;
-    }
-    .weui_fade_toggle{
-        background: rgba(0,0,0,.6);
-    }
-
-    .weui_toast {
-        position: fixed;
-        z-index: 99999;
-        width: 7.6em;
-        min-height: 7.6em;
-        top: 180px;
-        left: 50%;
-        margin-left: -3.8em;
-        background: rgba(40, 40, 40, 0.8);
-        text-align: center;
-        border-radius: 5px;
-        color: #FFFFFF;
-    }
-    .weui_icon_toast {
-        margin: 22px 0 0;
-        display: block;
-        &:before {
-            content: '\EA08';
-            color: #FFFFFF;
-            font-size: 55px;
-        }
-    }
-    .weui_toast_content {
-        margin: 0 0 15px;
-        color: #fff;
-    }
-    // loading toast
-    .weui_loading_toast{
-        .weui_toast_content{
-          margin-top:64%;
-          font-size:14px;
-          text-align: center;
-        }
-    }
-    .weui_loading{
-        position: absolute;
-        width: 0;
-        z-index: 2000000000;
-        left: 50%;
-        top: 38%;
-    }
-    .weui_loading_leaf{
-        position: absolute;
-        top: -5px;
-        opacity: 0.25;
-        &:before{
-            content:" ";
-            position: absolute;
-            width: 12.14px;
-            height: 3.08px;
-            background: rgb(209, 209, 213);
-            box-shadow: rgba(0, 0, 0, 0.0980392) 0px 0px 1px;
-            border-radius: 3px;
-            transform-origin: left 50% 0px;
-        }
-        &_0{
-            -webkit-animation: opacity-60-25-0-12 1.25s linear infinite;
-            animation: opacity-60-25-0-12 1.25s linear infinite;
-            &:before{
-                -webkit-transform: rotate(0) translate(11.92px, 0);
-                transform: rotate(0) translate(11.92px, 0);
-            }
-        }
-        &_1{
-            -webkit-animation: opacity-60-25-1-12 1.25s linear infinite;
-            animation: opacity-60-25-1-12 1.25s linear infinite;
-            &:before{
-                -webkit-transform: rotate(30deg) translate(11.92px, 0);
-                transform: rotate(30deg) translate(11.92px, 0);
-            }
-        }
-        &_2{
-            -webkit-animation: opacity-60-25-2-12 1.25s linear infinite;
-            animation: opacity-60-25-2-12 1.25s linear infinite;
-            &:before{
-                -webkit-transform: rotate(60deg) translate(11.92px, 0);
-                transform: rotate(60deg) translate(11.92px, 0);
-            }
-        }
-        &_3{
-            -webkit-animation: opacity-60-25-3-12 1.25s linear infinite;
-            animation: opacity-60-25-3-12 1.25s linear infinite;
-            &:before{
-                -webkit-transform: rotate(90deg) translate(11.92px, 0);
-                transform: rotate(90deg) translate(11.92px, 0);
-            }
-        }
-        &_4{
-            -webkit-animation: opacity-60-25-4-12 1.25s linear infinite;
-            animation: opacity-60-25-4-12 1.25s linear infinite;
-            &:before{
-                -webkit-transform: rotate(120deg) translate(11.92px, 0);
-                transform: rotate(120deg) translate(11.92px, 0);
-            }
-        }
-        &_5{
-            -webkit-animation: opacity-60-25-5-12 1.25s linear infinite;
-            animation: opacity-60-25-5-12 1.25s linear infinite;
-            &:before{
-                -webkit-transform: rotate(150deg) translate(11.92px, 0);
-                transform: rotate(150deg) translate(11.92px, 0);
-            }
-        }
-        &_6{
-            -webkit-animation: opacity-60-25-6-12 1.25s linear infinite;
-            animation: opacity-60-25-6-12 1.25s linear infinite;
-            &:before{
-                -webkit-transform: rotate(180deg) translate(11.92px, 0);
-                transform: rotate(180deg) translate(11.92px, 0);
-            }
-        }
-        &_7{
-            -webkit-animation: opacity-60-25-7-12 1.25s linear infinite;
-            animation: opacity-60-25-7-12 1.25s linear infinite;
-            &:before{
-                -webkit-transform: rotate(210deg) translate(11.92px, 0);
-                transform: rotate(210deg) translate(11.92px, 0);
-            }
-        }
-        &_8{
-            -webkit-animation: opacity-60-25-8-12 1.25s linear infinite;
-            animation: opacity-60-25-8-12 1.25s linear infinite;
-            &:before{
-                -webkit-transform: rotate(240deg) translate(11.92px, 0);
-                transform: rotate(240deg) translate(11.92px, 0);
-            }
-        }
-        &_9{
-            -webkit-animation: opacity-60-25-9-12 1.25s linear infinite;
-            animation: opacity-60-25-9-12 1.25s linear infinite;
-            &:before{
-                -webkit-transform: rotate(270deg) translate(11.92px, 0);
-                transform: rotate(270deg) translate(11.92px, 0);
-            }
-        }
-        &_10{
-            -webkit-animation: opacity-60-25-10-12 1.25s linear infinite;
-            animation: opacity-60-25-10-12 1.25s linear infinite;
-            &:before{
-                -webkit-transform: rotate(300deg) translate(11.92px, 0);
-                transform: rotate(300deg) translate(11.92px, 0);
-            }
-        }
-        &_11{
-            -webkit-animation: opacity-60-25-11-12 1.25s linear infinite;
-            animation: opacity-60-25-11-12 1.25s linear infinite;
-            &:before{
-                -webkit-transform: rotate(330deg) translate(11.92px, 0);
-                transform: rotate(330deg) translate(11.92px, 0);
-            }
-        }
-    }
-    @-webkit-keyframes opacity-60-25-0-12 {
-      0% { opacity: 0.25; }
-      0.01% { opacity: 0.25; }
-      0.02% { opacity: 1; }
-      60.01% { opacity: 0.25; }
-      100% { opacity: 0.25; }
-    }@-webkit-keyframes opacity-60-25-1-12 {
-      0% { opacity: 0.25; }
-      8.34333% { opacity: 0.25; }
-      8.35333% { opacity: 1; }
-      68.3433% { opacity: 0.25; }
-      100% { opacity: 0.25; }
-    }@-webkit-keyframes opacity-60-25-2-12 {
-      0% { opacity: 0.25; }
-      16.6767% { opacity: 0.25; }
-      16.6867% { opacity: 1; }
-      76.6767% { opacity: 0.25; }
-      100% { opacity: 0.25; }
-    }@-webkit-keyframes opacity-60-25-3-12 {
-      0% { opacity: 0.25; }
-      25.01% { opacity: 0.25; }
-      25.02% { opacity: 1; }
-      85.01% { opacity: 0.25; }
-      100% { opacity: 0.25; }
-    }@-webkit-keyframes opacity-60-25-4-12 {
-      0% { opacity: 0.25; }
-      33.3433% { opacity: 0.25; }
-      33.3533% { opacity: 1; }
-      93.3433% { opacity: 0.25; }
-      100% { opacity: 0.25; }
-    }@-webkit-keyframes opacity-60-25-5-12 {
-      0% { opacity: 0.270958333333333; }
-      41.6767% { opacity: 0.25; }
-      41.6867% { opacity: 1; }
-      1.67667% { opacity: 0.25; }
-      100% { opacity: 0.270958333333333; }
-    }@-webkit-keyframes opacity-60-25-6-12 {
-      0% { opacity: 0.375125; }
-      50.01% { opacity: 0.25; }
-      50.02% { opacity: 1; }
-      10.01% { opacity: 0.25; }
-      100% { opacity: 0.375125; }
-    }@-webkit-keyframes opacity-60-25-7-12 {
-      0% { opacity: 0.479291666666667; }
-      58.3433% { opacity: 0.25; }
-      58.3533% { opacity: 1; }
-      18.3433% { opacity: 0.25; }
-      100% { opacity: 0.479291666666667; }
-    }@-webkit-keyframes opacity-60-25-8-12 {
-      0% { opacity: 0.583458333333333; }
-      66.6767% { opacity: 0.25; }
-      66.6867% { opacity: 1; }
-      26.6767% { opacity: 0.25; }
-      100% { opacity: 0.583458333333333; }
-    }@-webkit-keyframes opacity-60-25-9-12 {
-      0% { opacity: 0.687625; }
-      75.01% { opacity: 0.25; }
-      75.02% { opacity: 1; }
-      35.01% { opacity: 0.25; }
-      100% { opacity: 0.687625; }
-    }@-webkit-keyframes opacity-60-25-10-12 {
-      0% { opacity: 0.791791666666667; }
-      83.3433% { opacity: 0.25; }
-      83.3533% { opacity: 1; }
-      43.3433% { opacity: 0.25; }
-      100% { opacity: 0.791791666666667; }
-    }@-webkit-keyframes opacity-60-25-11-12 {
-      0% { opacity: 0.895958333333333; }
-      91.6767% { opacity: 0.25; }
-      91.6867% { opacity: 1; }
-      51.6767% { opacity: 0.25; }
-      100% { opacity: 0.895958333333333; }
-    }
-
-    /*#endregion*/
-
-    /*#region Google风格loading*/
-    //页面loading
-    .page-loading-wrap{
-        position: relative;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: @c_nc_1;
-        text-align: center;
-        .mc_peVm;
-        z-index: 998;
-        .vm-cotar{
-            margin-bottom: 50px;
-        }
-        .page-loading-txt{
-            line-height: 40px;
-            font-size: 14px;
-        }
-    }
-    //行内loading
-    .inline-loading-wrap{
-        padding: 7px 15px 20px 15px;
-        text-align: center;
-        overflow: hidden;
-        .spinner-wrap{
-            line-height: 0;
-        }
-        .txt-wrap{
-            height: 20px;
-            line-height: 20px;
-            margin-left: 15px;
-            font-size: 16px;
-            color: @c_nc_60;
-        }
-    }
-    .preloader-wrapper{
-        display: inline-block;
-        position: relative;
-        width: 48px;
-        height: 48px;
-        &.inline{
-            width: 20px;
-            height: 20px;
-            .circle-clipper{
-                .circle{
-                    border-width: 2px;
-                }
-            }
-        }
-        &.small{
-            width: 36px;
-            height: 36px;
-        }
-        &.big{
-            width: 64px;
-            height: 64px;
-        }
-        &.active{
-            -webkit-animation: container-rotate 1568ms linear infinite;
-            animation: container-rotate 1568ms linear infinite;
-            .spinner-layer.spinner-blue{
-                -webkit-animation: fill-unfill-rotate 5332ms cubic-bezier(0.4, 0, 0.2, 1) infinite both,blue-fade-in-out 5332ms cubic-bezier(0.4, 0, 0.2, 1) infinite both;
-                animation: fill-unfill-rotate 5332ms cubic-bezier(0.4, 0, 0.2, 1) infinite both,blue-fade-in-out 5332ms cubic-bezier(0.4, 0, 0.2, 1) infinite both;
-            }
-            .spinner-layer.spinner-red{
-                -webkit-animation: fill-unfill-rotate 5332ms cubic-bezier(0.4, 0, 0.2, 1) infinite both,red-fade-in-out 5332ms cubic-bezier(0.4, 0, 0.2, 1) infinite both;
-                animation: fill-unfill-rotate 5332ms cubic-bezier(0.4, 0, 0.2, 1) infinite both,red-fade-in-out 5332ms cubic-bezier(0.4, 0, 0.2, 1) infinite both;
-            }
-            .spinner-layer.spinner-yellow{
-                -webkit-animation: fill-unfill-rotate 5332ms cubic-bezier(0.4, 0, 0.2, 1) infinite both,yellow-fade-in-out 5332ms cubic-bezier(0.4, 0, 0.2, 1) infinite both;
-                animation: fill-unfill-rotate 5332ms cubic-bezier(0.4, 0, 0.2, 1) infinite both,yellow-fade-in-out 5332ms cubic-bezier(0.4, 0, 0.2, 1) infinite both;
-            }
-            .spinner-layer.spinner-green{
-                -webkit-animation: fill-unfill-rotate 5332ms cubic-bezier(0.4, 0, 0.2, 1) infinite both,green-fade-in-out 5332ms cubic-bezier(0.4, 0, 0.2, 1) infinite both;
-                animation: fill-unfill-rotate 5332ms cubic-bezier(0.4, 0, 0.2, 1) infinite both,green-fade-in-out 5332ms cubic-bezier(0.4, 0, 0.2, 1) infinite both;
-            }
-            .spinner-layer,
-            .spinner-layer.spinner-blue-only,
-            .spinner-layer.spinner-red-only,
-            .spinner-layer.spinner-yellow-only,
-            .spinner-layer.spinner-green-only{
-                opacity: 1;
-                -webkit-animation: fill-unfill-rotate 5332ms cubic-bezier(0.4, 0, 0.2, 1) infinite both;
-                animation: fill-unfill-rotate 5332ms cubic-bezier(0.4, 0, 0.2, 1) infinite both;
-            }
-            .circle-clipper{
-                &.left{
-                    .circle {
-                        -webkit-animation: left-spin 1333ms cubic-bezier(0.4, 0, 0.2, 1) infinite both;
-                        animation: left-spin 1333ms cubic-bezier(0.4, 0, 0.2, 1) infinite both
-                    }
-                }
-                &.right{
-                    .circle {
-                        -webkit-animation: right-spin 1333ms cubic-bezier(0.4, 0, 0.2, 1) infinite both;
-                        animation: right-spin 1333ms cubic-bezier(0.4, 0, 0.2, 1) infinite both
-                    }
-                }
-            }
-        }
-        .spinner-layer {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            border-color: #26a69a;
-        }
-        .spinner-blue,.spinner-blue-only {
-            border-color: #4285f4;
-        }
-        .spinner-red,.spinner-red-only {
-            border-color: #db4437;
-        }
-        .spinner-yellow,.spinner-yellow-only {
-            border-color: #f4b400;
-        }
-        .spinner-green,.spinner-green-only {
-            border-color: #0f9d58;
-        }
-        .gap-patch {
-            position: absolute;
-            top: 0;
-            left: 45%;
-            width: 10%;
-            height: 100%;
-            overflow: hidden;
-            border-color: inherit;
-            .circle {
-                width: 1000%;
-                left: -450%;
-            }
-        }
-        .circle-clipper {
-            display: inline-block;
-            position: relative;
-            width: 50%;
-            height: 100%;
-            overflow: hidden;
-            border-color: inherit;
-            &.left{
-                .circle {
-                    left: 0;
-                    border-right-color: transparent !important;
-                    -webkit-transform: rotate(129deg);
-                    transform: rotate(129deg);
-                }
-            }
-            &.right{
-                .circle {
-                    left: -100%;
-                    border-left-color: transparent !important;
-                    -webkit-transform: rotate(-129deg);
-                    transform: rotate(-129deg)
-                }
-            }
-            .circle {
-                width: 200%;
-                height: 100%;
-                border-width: 3px;
-                border-style: solid;
-                border-color: inherit;
-                border-bottom-color: transparent !important;
-                border-radius: 50%;
-                -webkit-animation: none;
-                animation: none;
-                position: absolute;
-                top: 0;
-                right: 0;
-                bottom: 0;
-            }
-        }
-    }
-    @-webkit-keyframes container-rotate {
-        to {
-            -webkit-transform: rotate(360deg);
-        }
-    }
-    @keyframes container-rotate {
-        to {
-            -webkit-transform: rotate(360deg);
-            transform: rotate(360deg);
-        }
-    }
-    @-webkit-keyframes fill-unfill-rotate {
-        12.5% {
-            -webkit-transform: rotate(135deg)
-        }
-        25% {
-            -webkit-transform: rotate(270deg)
-        }
-        37.5% {
-            -webkit-transform: rotate(405deg)
-        }
-        50% {
-            -webkit-transform: rotate(540deg)
-        }
-        62.5% {
-            -webkit-transform: rotate(675deg)
-        }
-        75% {
-            -webkit-transform: rotate(810deg)
-        }
-        87.5% {
-            -webkit-transform: rotate(945deg)
-        }
-        to {
-            -webkit-transform: rotate(1080deg)
-        }
-    }
-    @keyframes fill-unfill-rotate {
-        12.5% {
-            -webkit-transform: rotate(135deg);
-            transform: rotate(135deg)
-        }
-        25% {
-            -webkit-transform: rotate(270deg);
-            transform: rotate(270deg)
-        }
-        37.5% {
-            -webkit-transform: rotate(405deg);
-            transform: rotate(405deg)
-        }
-        50% {
-            -webkit-transform: rotate(540deg);
-            transform: rotate(540deg)
-        }
-        62.5% {
-            -webkit-transform: rotate(675deg);
-            transform: rotate(675deg)
-        }
-        75% {
-            -webkit-transform: rotate(810deg);
-            transform: rotate(810deg)
-        }
-        87.5% {
-            -webkit-transform: rotate(945deg);
-            transform: rotate(945deg)
-        }
-        to {
-            -webkit-transform: rotate(1080deg);
-            transform: rotate(1080deg)
-        }
-    }
-    @-webkit-keyframes blue-fade-in-out {
-        from {
-            opacity: 1
-        }
-        25% {
-            opacity: 1
-        }
-        26% {
-            opacity: 0
-        }
-        89% {
-            opacity: 0
-        }
-        90% {
-            opacity: 1
-        }
-        100% {
-            opacity: 1
-        }
-    }
-    @keyframes blue-fade-in-out {
-        from {
-            opacity: 1
-        }
-        25% {
-            opacity: 1
-        }
-        26% {
-            opacity: 0
-        }
-        89% {
-            opacity: 0
-        }
-        90% {
-            opacity: 1
-        }
-        100% {
-            opacity: 1
-        }
-    }
-    @-webkit-keyframes red-fade-in-out {
-        from {
-            opacity: 0
-        }
-        15% {
-            opacity: 0
-        }
-        25% {
-            opacity: 1
-        }
-        50% {
-            opacity: 1
-        }
-        51% {
-            opacity: 0
-        }
-    }
-    @keyframes red-fade-in-out {
-        from {
-            opacity: 0
-        }
-        15% {
-            opacity: 0
-        }
-        25% {
-            opacity: 1
-        }
-        50% {
-            opacity: 1
-        }
-        51% {
-            opacity: 0
-        }
-    }
-    @-webkit-keyframes yellow-fade-in-out {
-        from {
-            opacity: 0
-        }
-        40% {
-            opacity: 0
-        }
-        50% {
-            opacity: 1
-        }
-        75% {
-            opacity: 1
-        }
-        76% {
-            opacity: 0
-        }
-    }
-    @keyframes yellow-fade-in-out {
-        from {
-            opacity: 0
-        }
-        40% {
-            opacity: 0
-        }
-        50% {
-            opacity: 1
-        }
-        75% {
-            opacity: 1
-        }
-        76% {
-            opacity: 0
-        }
-    }
-    @-webkit-keyframes green-fade-in-out {
-        from {
-            opacity: 0
-        }
-        65% {
-            opacity: 0
-        }
-        75% {
-            opacity: 1
-        }
-        90% {
-            opacity: 1
-        }
-        100% {
-            opacity: 0
-        }
-    }
-    @keyframes green-fade-in-out {
-        from {
-            opacity: 0
-        }
-        65% {
-            opacity: 0
-        }
-        75% {
-            opacity: 1
-        }
-        90% {
-            opacity: 1
-        }
-        100% {
-            opacity: 0
-        }
-    }
-    @-webkit-keyframes left-spin {
-        from {
-            -webkit-transform: rotate(130deg)
-        }
-        50% {
-            -webkit-transform: rotate(-5deg)
-        }
-        to {
-            -webkit-transform: rotate(130deg)
-        }
-    }
-    @keyframes left-spin {
-        from {
-            -webkit-transform: rotate(130deg);
-            transform: rotate(130deg)
-        }
-        50% {
-            -webkit-transform: rotate(-5deg);
-            transform: rotate(-5deg)
-        }
-        to {
-            -webkit-transform: rotate(130deg);
-            transform: rotate(130deg)
-        }
-    }
-    @-webkit-keyframes right-spin {
-        from {
-            -webkit-transform: rotate(-130deg)
-        }
-        50% {
-            -webkit-transform: rotate(5deg)
-        }
-        to {
-            -webkit-transform: rotate(-130deg)
-        }
-    }
-    @keyframes right-spin {
-        from {
-            -webkit-transform: rotate(-130deg);
-            transform: rotate(-130deg)
-        }
-        50% {
-            -webkit-transform: rotate(5deg);
-            transform: rotate(5deg)
-        }
-        to {
-            -webkit-transform: rotate(-130deg);
-            transform: rotate(-130deg)
-        }
-    }
-    /*#endregion*/
+    //Google风格loading
+    #McBaseLib > .loadingGoogleStyle();
 }
 /*#endregion */
 
@@ -982,6 +268,10 @@
 /*#endregion */
 
 /*#region 文本相关 */
+.mc_txtMultLineOverEllipsis(@oneLineHeight, @lineNbr){
+//多行文本超出宽度显示省略号
+    #McBaseLib > .textMultLineOverflowEllipsis(@oneLineHeight, @lineNbr);
+}
 .mc_txtOverEllipsis(){
 //文本超出宽度显示省略号
     #McBaseLib > .textOverflowEllipsis;
@@ -1005,61 +295,6 @@
 //用after元素实现垂直居中
     #McBaseLib > .pseudoElementsVerticalMiddle;
 }
-/*#endregion */
-
-/*#region 背景图的使用(传入图片名) - 主站 */
-/*//网格图使用示例
-.mc_bg(@x,@y){
-    .mc_bgNpP("brands.png",-@x -@y);
-}
-.mc_bgNpP(@imgName,@position) when (isstring(@imgName)){
-//不重复(传入位置信息)
-    #McBaseLib > .background(@imgName,no-repeat @position);
-}
-.mc_bgNpP(@color,@imgName,@position){
-//不重复带背景色(传入位置信息)
-    #McBaseLib > .background(@color,@imgName,no-repeat @position);
-}
-.mc_bgNp(@imgName) when (isstring(@imgName)){
-//不重复
-    #McBaseLib > .background(@imgName,no-repeat top left);
-}
-.mc_bgNp(@color,@imgName){
-//不重复带背景色
-    #McBaseLib > .background(@color,@imgName,no-repeat top left);
-}
-.mc_bgNpCC(@imgName) when (isstring(@imgName)){
-//不重复-居中
-    #McBaseLib > .background(@imgName,no-repeat center);
-}
-.mc_bgNpCC(@color,@imgName){
-//不重复带背景色-居中
-    #McBaseLib > .background(@color,@imgName,no-repeat center);
-}
-.mc_bgRp(@imgName) when (isstring(@imgName)){
-//XY重复
-    #McBaseLib > .background(@imgName,repeat top left);
-}
-.mc_bgRp(@color,@imgName){
-//XY重复带背景色
-    #McBaseLib > .background(@color,@imgName,repeat top left);
-}
-.mc_bgRpX(@imgName) when (isstring(@imgName)){
-//X重复
-    #McBaseLib > .background(@imgName,repeat-x top left);
-}
-.mc_bgRpX(@color,@imgName){
-//X重复带背景色
-    #McBaseLib > .background(@color,@imgName,repeat-x top left);
-}
-.mc_bgRpY(@imgName) when (isstring(@imgName)){
-//Y重复
-    #McBaseLib > .background(@imgName,repeat-y top left);
-}
-.mc_bgRpY(@color,@imgName){
-//Y重复带背景色
-    #McBaseLib > .background(@color,@imgName,repeat-y top left);
-}*/
 /*#endregion */
 
 /*#region 背景图的使用(传入图片名) - 微站 */

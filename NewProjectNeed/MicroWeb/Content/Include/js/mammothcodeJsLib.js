@@ -1,6 +1,6 @@
 ﻿//MammothcodeCoreJsLib
-//Version 0.2.7.5
-//Date 2016年6月13日17:33:09
+//Version 0.2.7.6
+//Date 2017年6月18日02:05:29
 //Edit Zero
 
 //======= namespacep START=======//
@@ -304,8 +304,8 @@ Mc.Ajax = function (options) {
 
 /**
  * 下拉分页V2
- * version 1.1
- * Update 2016年8月4日16:05:14
+ * version 1.2
+ * Update 2017年6月18日
  * Author Zero
  */
 Mc.DropDownLoad = function (options) {
@@ -407,13 +407,25 @@ Mc.DropDownLoad = function (options) {
         //请求新的数据
         ajaxNewData: function (obj, args, returnData) {
             var ajaxDef = $.Deferred();
+            var url = ''
+            if (typeof args.url === 'function') {
+                url = args.url()
+            } else {
+                url = args.url
+            }
+            var data = {}
+            if (typeof args.data === 'function') {
+                data = args.data()
+            } else {
+                data = args.data
+            }
             Mc.Ajax({
                 type: args.type,
-                url: args.url,
+                url: url,
                 data: $.extend({
                     "pageSize": args.pageSize, //分页数
                     "pageIndex": dl.dlData.pageIndex //当前页页码
-                }, args.data),
+                }, data),
                 async: args.async,
                 success: function (result) {
                     //result = JSON.parse(result);
@@ -2039,7 +2051,7 @@ Mc.Util.dropMenuList = function (navList, oneSildeDown) {
  */
 Mc.Util.IniFixCountDown = function (options) {
     var settings = $.extend({
-        target: "#verifity", //jQuery选择器字符串
+        target: "#verify", //jQuery选择器字符串
         fixTime: 60, //时间
         timeFormat: "%d", //计时格式化字符串
         startCallback: null, //开始倒计时回调函数

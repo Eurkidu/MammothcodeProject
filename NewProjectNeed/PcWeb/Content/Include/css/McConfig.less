@@ -65,7 +65,7 @@
 /*#region Page Initialize */
 .mc_initialize(){
 //初始化页面
-    @minWidth: 320px; //页面最小宽度
+    @minWidth: 1180px; //页面最小宽度
     @defaultFontSize: 14px; //页面默认字体大小
     /*@media only screen and (min-width: 1100px){
         #McBaseLib > .setScrollbar; //更改滚动条样式
@@ -1008,7 +1008,7 @@
 /*#endregion */
 
 /*#region 背景图的使用(传入图片名) - 主站 */
-/*//网格图使用示例
+//网格图使用示例
 .mc_bg(@x,@y){
     .mc_bgNpP("brands.png",-@x -@y);
 }
@@ -1059,11 +1059,11 @@
 .mc_bgRpY(@color,@imgName){
 //Y重复带背景色
     #McBaseLib > .background(@color,@imgName,repeat-y top left);
-}*/
+}
 /*#endregion */
 
 /*#region 背景图的使用(传入图片名) - 微站 */
-//网格图使用示例
+/*//网格图使用示例
 .mc_bg(@x,@y){
     .mc_bgNpP("",-@x -@y);
 }
@@ -1114,6 +1114,6 @@
 .mc_bgRpY(@color,@imgName){
 //Y重复带背景色
     #McBaseLib > .backgroundSize(@color,@imgName,contain,repeat-y top left);
-}
+}*/
 /*#endregion */
 //==== 对外引用 END ====//
