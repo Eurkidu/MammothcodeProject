@@ -93,11 +93,11 @@ McVerify.addListener = function (wrap, type, fn, fn2) {
             $item.on("input", processIpt);
         }
     });
-    $(function() {
+    $(function () {
         processIpt();
     });
     return {
-        doCheck: function() {
+        doCheck: function () {
             processIpt();
         }
     }
@@ -119,25 +119,29 @@ McVerify.FormGetData = function (wrap, fn, exopt) {
     var err = '';
     //正则对象obj
     var valiReg = {
-        "int": /^\+?[1-9][0-9]*$/,
+        "int": /^[\-|\+]?[0-9]*$/,
+        "+int0": /^\+?[0-9][0-9]*$/,
         "+int": /^\+?[1-9][0-9]*$/,
         '-int': /^\-[1-9][0-9]*$/,
         'float': /^(-?\d+)(\.\d+)?/,
         '+float': /^(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*))$/,
+        '+floatwith2': /^(([1-9]\d*)|0)(\.\d{1,2})?$/, //包括0的浮点数，保留2位小数
         '-float': /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/,
         'ip': /^(?:(?:[01]?\d{1,2}|2[0-4]\d|25[0-5])\.){3}(?:[01]?\d{1,2}|2[0-4]\d|25[0-5])$/,
         'email': /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]{2,5}$/,
         'phone': /^(\(\d{3,4}\)|\d{3,4}-)?\d{7,8}$/,
-        'mobile': /^(0|86|17951)?1(3[0-9]|4[57]|5[0-35-9]|7[0135678]|8[0-9])\d{8}$/,
+        'mobile': /^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/,
         'idcard': /^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/
     }
     //验证消息obj
     var valiType = {
         "int": "请输入正确的整数",
+        "+int0": "请输入正确的正整数",
         "+int": "请输入正确的正整数",
         '-int': '请输入正确的负整数',
         'float': '请输入正确的正浮点数',
         '+float': '请输入正确的正浮点数',
+        '+floatwith2': '请输入正确的数字（保留2位小数）',
         '-float': '请输入正确的负浮点数',
         'ip': 'IP地址有误',
         'email': '电子邮件地址有误',
@@ -158,7 +162,7 @@ McVerify.FormGetData = function (wrap, fn, exopt) {
         extend: {}
     }
     //验证函数
-    function varify(type, val) {
+    function varify(label, type, val) {
         if (val === null || val === "") return true; //应该调用是否必填函数判断
         var result = true;
         reg = valiReg[type];
@@ -167,7 +171,7 @@ McVerify.FormGetData = function (wrap, fn, exopt) {
             var baseType = validata.base;
             result = baseType.verify(reg, val);
             if (!result) {
-                McVerify.Error(baseType.msg(type));
+                McVerify.Error(label + baseType.msg(type));
             }
         }
         else {
@@ -198,20 +202,22 @@ McVerify.FormGetData = function (wrap, fn, exopt) {
         }
     }
     //检测值
-    var valCheck = function (must, type, str) {//分别代表可选,种类,值
-        if (!varify(type, str)) {
+    var valCheck = function (label, must, type, str) {//分别代表label,可选,种类,值
+        if (!varify(label, type, str)) {
             return false;
         }
         if (!str) {
             if (must) {
-                if (must == "0") {
-                    console.info("你好像忘记对mc-must赋值了?");
-                    return false;
-                }
-                else {
-                    McVerify.Error(must + "必填");
-                    return false;
-                }
+                //if (must == "0") {
+                //    console.info("你好像忘记对mc-must赋值了?");
+                //    return false;
+                //}
+                //else {
+                //    McVerify.Error(label + "必填");
+                //    return false;
+                //}
+                McVerify.Error(label + "必填");
+                return false;
             }
             else {
                 itemVal = null;
@@ -249,17 +255,18 @@ McVerify.FormGetData = function (wrap, fn, exopt) {
             var type;
             var max, min;//整数最大值最小值
             var $this = $(this);
-            if ($this.attr('mc-must')) {
-                must = $this.attr('mc-must');//存储必填错误信息
-            }
-            else {
-                if (typeof ($this.attr('mc-must')) == 'string') {
-                    must = "0";
-                }
-                else {
-                    must = false;
-                }
-            }
+            must = $this.is("[mc-must]"); //判断是否必填
+            //if ($this.attr('mc-must')) {
+            //    must = $this.attr('mc-must');//存储必填错误信息
+            //}
+            //else {
+            //    if (typeof ($this.attr('mc-must')) == 'string') {
+            //        must = "0";
+            //    }
+            //    else {
+            //        must = false;
+            //    }
+            //}
             if ($this.attr('mc-max')) {
                 max = parseInt($this.attr('mc-max'));
             }
@@ -269,6 +276,7 @@ McVerify.FormGetData = function (wrap, fn, exopt) {
             type = $this.attr('mc-type');
             var name = $this.attr('mc-name');//存储值的种类
             itemVal = getElementValue($this); //获取值
+            var label = $this.attr('mc-label') || "";//提示文字label
             //if ($this.is('input') || $this.is('textarea')) {
             //    itemVal = $this.val();
             //}
@@ -280,7 +288,7 @@ McVerify.FormGetData = function (wrap, fn, exopt) {
             //        itemVal = $this.text();
             //    }
             //}
-            var checkRes = valCheck(must, type, itemVal);
+            var checkRes = valCheck(label, must, type, itemVal);
             if (checkRes !== false) {//检查值,如果通过验证,进行下一步
                 if (type == 'int') {//是整数进行最大最小判断
                     itemVal = parseInt(itemVal);
@@ -324,14 +332,14 @@ McVerify.FormGetData = function (wrap, fn, exopt) {
                             }
                         }
                         if (data[name]) {
-                            data[name] = data[name] + itemVal;
+                            data[name] = data[name] + "," + (itemVal ? itemVal: "");
                         } else {
                             data[name] = itemVal;
                         }
                     }
                     else {
                         if (data[name]) {
-                            data[name] = data[name] + itemVal;
+                            data[name] = data[name] + "," + (itemVal ? itemVal : "");
                         } else {
                             data[name] = itemVal;
                         }
@@ -339,7 +347,7 @@ McVerify.FormGetData = function (wrap, fn, exopt) {
                 }
                 else {
                     if (data[name]) {
-                        data[name] = data[name] + itemVal;
+                        data[name] = data[name] + "," + (itemVal ? itemVal : "");
                     } else {
                         data[name] = itemVal;
                     }

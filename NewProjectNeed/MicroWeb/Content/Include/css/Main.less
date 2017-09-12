@@ -1,4 +1,4 @@
-/*----------------------------
+﻿/*----------------------------
     Style Create: 2017年1月16日
     Author: Zero
     Style Update: 2017年1月16日
@@ -182,6 +182,9 @@ input::-webkit-inner-spin-button {
 //header 偏移
 .wrap{
     padding-top: 44px;
+    &.no-header{
+        padding-top: 0;
+    }
 }
 
 /*#region header*/
@@ -193,7 +196,7 @@ input::-webkit-inner-spin-button {
     background: @c_mc;
     z-index: 999;
     &.-static{
-        position: static;
+        position: absolute;
     }
     .tool-btn {
         width: 75px;
@@ -211,10 +214,9 @@ input::-webkit-inner-spin-button {
             display: block;
             width: 100%;
             height: 100%;
-            text-align: left;
+            color: @c_nc_1;
             cursor: pointer;
             .mc_peVm;
-            color: @c_nc_1;
         }
         .txt-icon{
             display: block;

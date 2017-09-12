@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<html class="no-scroll height-cotar">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <meta name="wap-font-scale" content="no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=no" />
+    <title>@ViewBag.Title</title>
+    <!--主样式文件-->
+    <link href="/Content/IncludeH5/css/Main.min.css" rel="stylesheet" />
+    <link href="/Content/IncludeH5/css/animate.min.css" rel="stylesheet" />
+    <!--JQuery-->
+    <script src="/Content/Include/js/jquery-1.8.3.min.js"></script>
+    <!-- underscore -->
+    @*<script src="/Content/Include/js/underscore-min.js"></script>*@
+    <!-- json2 -->
+    <script src="/Content/Include/js/json2.js"></script>
+    <!-- artTemplate -->
+    <script src="/Content/Include/js/template.js"></script>
+    <!-- 曼码JsLib -->
+    <script src="/Content/Include/js/mammothcodeJsLib.min.js"></script>
+    <!-- vue -->
+    <script src="/Content/IncludeH5/js/vue/vue.min.js"></script>
+    <!-- picker -->
+    @*<link href="/Content/Include/js/lib/picker/css/mui.picker.min.css" rel="stylesheet" />
+    <script src="/Content/Include/js/lib/picker/mui.min.js"></script>
+    <script src="/Content/Include/js/lib/picker/js/mui.picker.min.js"></script>*@
+    <!-- Mc Verify -->
+    @*<script src="/Content/Include/js/mc.verify.js"></script>*@
+    <script src="/Content/IncludeH5/js/Common.min.js"></script>
+    <style id="html_style"></style>
+    <script type="text/javascript">
+        ;(calMinHeight = function () {
+            var wh = $(window).height()
+            var headerHeight = 44 // 可配置
+            var styleString = ""
+            styleString += ".min-height-cotar{min-height:" + wh + "px}"
+            styleString += ".height-cotar{height:" + wh + "px}"
+            styleString += ".content-min-height-cotar{height:" + (wh - headerHeight) + "px}"
+            styleString += ".content-height-cotar{height:" + (wh - headerHeight) + "px}"
+            var htmlStyle = $("#html_style")[0]
+            if ('styleSheet' in htmlStyle) {
+                htmlStyle.setAttribute('type', 'text/css')
+                htmlStyle.styleSheet.cssText = styleString
+            } else {
+                htmlStyle.innerHTML = styleString
+            }
+        })()
+        //$(window).on("resize", function () {
+        //    calMinHeight()
+        //})
+    </script>
+</head>
+<body id="body" class="no-scroll height-cotar">
+    <div class="h5-cotar no-scroll height-cotar">
+        <!-- loading -->
+        <div id="mc_page_loading" class="loading-page-cotar page-loading-wrap height-cotar" ontouchstart="return false;">
+            <div class="vm-cotar">
+                <div class="mcloading-wrapper active">
+                    <div class="mc-circle-loading">
+                        <span class="loading-spinner -white"></span>
+                    </div>
+                    <div class="page-loading-txt">页面加载中..</div>
+                </div>
+            </div>
+        </div>
+        <div id="h5_wrap" class="wrap resize" style="width: 750px; height: 1210px; top: 0; left: 0; z-index: 2;">
+            <!-- 背景音乐 -->
+            @*<div id="music_btn" class="music-play">
+                    <div style="position: absolute; visibility: hidden; z-index: -1; width: 0; height: 0; overflow: hidden">
+                        <audio id="bg_audio" controls="controls">
+                            <source src="/Content/Include/bgm.mp3" type="audio/mpeg" />
+                        </audio>
+                    </div>
+                    <script>
+                        //自动播放
+                        document.addEventListener("WeixinJSBridgeReady", function () {
+                            document.getElementById('bg_audio').play()
+                        }, false);
+                        $(function () {
+                            var audioPlayer = document.getElementById('bg_audio')
+                            $(document).one("touchstart", function () {
+                                audioPlayer.play()
+                            })
+                            $("#music_btn").on("click",function() {
+                                var $this = $(this)
+                                if (audioPlayer.paused) {
+                                    // 暂停中
+                                    document.getElementById('bg_audio').play()
+                                    $this.removeClass("pause")
+                                } else {
+                                    // 播放中
+                                    document.getElementById('bg_audio').pause()
+                                    $this.addClass("pause")
+                                }
+                            })
+                        })
+                    </script>
+                </div>*@
+            @RenderBody()
+        </div>
+        <!-- 提示分享弹出层 -->
+        <div id="share_pop" class="share-pop hide" onclick="hideSharePop()">
+            <img src="/Content/Include/img/pic-share-pop.png">
+        </div>
+        <script>
+            ; (function () {
+                var $sharePop = $("#share_pop")
+                window.showSharePop = function () {
+                    $sharePop.removeClass("hide")
+                    setTimeout(function () {
+                        $sharePop.addClass("active")
+                    }, 50)
+                }
+                window.hideSharePop = function () {
+                    $sharePop.removeClass("active")
+                    setTimeout(function () {
+                        $sharePop.addClass("hide")
+                    }, 350)
+                }
+            })();
+        </script>
+    </div>
+</body>
+</html>

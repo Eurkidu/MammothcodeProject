@@ -6,7 +6,7 @@
 @import "MammothcodeCoreLib.less";
 
 //图片路径
-@configImgUrl: "/Content/Include/img/icon";
+@configImgUrl: "/Content/IncludeH5/img/icon";
 //颜色√
 @c_mc: #fdb056; //主色
 
@@ -151,7 +151,6 @@
             display: inline-block;
             background: @c_nc_1;
             vertical-align: middle;
-            z-index: 5;
             .pop-close{
                 position: absolute;
                 top: 10px;
@@ -165,9 +164,9 @@
             right: 0;
             bottom: 0;
             left: 0;
-            z-index: 1;
-            background-color: @c_nc_6;
-            opacity: .5;
+            z-index: -1;
+            background-color: #000;
+            opacity: .8;
         }
     }
     //tip

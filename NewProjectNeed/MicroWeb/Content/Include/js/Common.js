@@ -46,7 +46,7 @@
     // 未登录跳转页面
     var notLoginRedictUrl = "/"
     // 获取用户信息请求接口
-    var getMemberInfoAjaxUrl = "/Api/Member/MemberGetInfo"
+    var getMemberInfoAjaxUrl = "/Api/Member/GetLoginMemberInfoInWeb"
     // 不需要登录可以进入的页面
     var allowPageList = [
     ]
@@ -235,9 +235,7 @@
 
     // 未登录操作
     window.noLoginAction = function () {
-        // 设置登录返回url
-        setLoginBackUrl(curlocation.pathname + curlocation.search)
-        urlJump(notLoginRedictUrl)
+        noLoginAction()
     }
 
     // 刷新用户登录状态
@@ -382,20 +380,30 @@
 //===== Loading START =====//
 //#region 微信风格loading
 ; (function () {
-    // 微信loading
-    var weLoading = new Mc.Pop.Loading()
-    // 显示loading
+    //微信loading
+    var weLoading = new Mc.Pop.Loading({
+        externalTemplate: '<div class="mc-process-loading-wrap height-cotar" ontouchstart="return false;">\
+                    <div class="vm-cotar">\
+                        <div class="mcloading-wrapper active">\
+                            <div class="mc-circle-loading small">\
+                                <span class="loading-spinner -white"></span>\
+                            </div>\
+                        </div>\
+                    </div>\
+                </div>'
+    });
+    //显示loading
     window.showWeLoading = function () {
-        weLoading.show()
+        weLoading.show();
     }
-    // 隐藏loading
+    //隐藏loading
     window.closeWeLoading = function () {
-        weLoading.hide()
+        weLoading.hide();
     }
-    // 延迟隐藏loading
+    //延迟隐藏loading
     window.lazyCloseWeLoading = function () {
         setTimeout(function () {
-            weLoading.hide()
+            weLoading.hide();
         }, 300);
     }
 })();
@@ -954,5 +962,320 @@ $(function () {
 //#endregion
 //===== 滚动选择框 END =====//
 
+//#region 支付相关
+; (function () {
+    // 初始化简易支付
+    window.McPopPay = function (options) {
+        var settings = $.extend(true, {
+            WeChatPay: true, // 是否有微信支付
+            WeChatPayConfig: {
+                text: '微信安全支付',
+                clickCallback: null, // 点击回调
+                paySuccess: null, // 支付成功回调
+                url: null,
+                api: true,
+                data: {},
+                success: function () { },
+                fail: function () { },
+                beforeSend: function () { }
+            },
+            AliPay: true, // 是否有支付宝支付
+            AliPayConfig: {
+                text: '支付宝支付',
+                clickCallback: null, // 点击回调
+                url: null,
+                data: {}
+            },
+            AccountPay: true, // 是否有账户支付
+            AccountPayConfig: {
+                text: '余额支付',
+                clickCallback: null, // 点击回调
+                paySuccess: null, // 支付成功回调
+                nowBalance: 0, // 当前余额
+                url: null,
+                api: true,
+                data: {},
+                success: function () { },
+                fail: function () { },
+                beforeSend: function () { }
+            }
+        }, options)
 
+        var dom = {
+            $root: null,
+            $sheetGroup: null,
+            $cancelBtn: null,
+            $popBg: null
+        }
+
+        //#region 微信支付
+        // 微信支付配置项
+        var wechatPayConfig = {
+            PAY_SUCCESS: 0, // 支付成功
+            PAY_CANCEL: 1, // 支付过程中用户取消
+            PAY_FAIL: 2 // 支付失败
+        }
+        // 微信支付返回结果配置
+        var wechatResultConfig = {
+            'get_brand_wcpay_request:ok': {
+                code: wechatPayConfig.PAY_SUCCESS,
+                text: '支付成功'
+            },
+            'get_brand_wcpay_request:cancel': {
+                code: wechatPayConfig.PAY_CANCEL,
+                text: '用户取消支付'
+            },
+            'get_brand_wcpay_request:fail': {
+                code: wechatPayConfig.PAY_FAIL,
+                text: '支付失败'
+            }
+        }
+        // 调用微信 JS api 支付
+        function weChatJsApiCall(param, callback) {
+            if (window.WeixinJSBridge) {
+                window.WeixinJSBridge.invoke(
+                    'getBrandWCPayRequest',
+                    param, // 支付参数
+                    function (res) {
+                        var result = wechatResultConfig[res.err_msg]
+                        if (result && result.code === wechatPayConfig.PAY_SUCCESS) {
+                            callback && callback(result) // 支付成功回调
+                        } else {
+                            console.log(res)
+                            if (!result) {
+                                alert(JSON.stringify(res))
+                            } else {
+                                showTip(result.text || '支付失败')
+                            }
+                        }
+                    }
+                )
+            } else {
+                showTip('请在微信中进行微信支付')
+            }
+        }
+
+        // 调用微信支付
+        function callWeChatPay(result, callback) {
+            // 组装支付参数
+            var param = {
+                'appId': result.appId,
+                'nonceStr': result.nonceStr,
+                'package': result.package,
+                'paySign': result.paySign,
+                'signType': 'MD5',
+                'timeStamp': result.timeStamp
+            }
+            if (typeof window.WeixinJSBridge == "undefined") {
+                if (document.addEventListener) {
+                    document.addEventListener('WeixinJSBridgeReady', function () {
+                        weChatJsApiCall(param, callback)
+                    }, false);
+                } else if (document.attachEvent) {
+                    document.attachEvent('WeixinJSBridgeReady', function () {
+                        weChatJsApiCall(param, callback)
+                    }, weChatJsApiCall);
+                    document.attachEvent('onWeixinJSBridgeReady', function () {
+                        weChatJsApiCall(param, callback)
+                    }, weChatJsApiCall);
+                }
+            }
+            else {
+                weChatJsApiCall(param, callback)
+            }
+        }
+
+        // 初始化微信支付
+        function initWeChatPay() {
+            var config = settings.WeChatPayConfig
+            // 微信支付点击事件
+            dom.$sheetGroup.on('click', '.wechatpay-item', function () {
+                var callbackResult = true
+                // 点击回调
+                config.clickCallback && (callbackResult = config.clickCallback.call(this) !== false ? true : false)
+                if (callbackResult && config.url) {
+                    Mc.Ajax({
+                        id: 'mcWeChatPay',
+                        url: config.url,
+                        api: config.api,
+                        data: config.data,
+                        hasLoading: true,
+                        success: config.success,
+                        fail: config.fail,
+                        beforeSend: config.beforeSend
+                    }).then(function (response) {
+                        var _this = this
+                        var result = response.data
+                        // 调用微信支付
+                        callWeChatPay(result, function () {
+                            // 支付成功回调
+                            config.paySuccess && config.paySuccess.call(_this, response)
+                        })
+                    }, function (response) {
+                        showTip(response.description)
+                    })
+                }
+            })
+        }
+        //#endregion
+
+        //#region 支付宝支付
+        // 初始化支付宝支付
+        function initAliPayPay() {
+            var config = settings.AliPayConfig
+            // 支付宝支付点击事件
+            dom.$sheetGroup.on('click', '.alipay-item', function () {
+                var callbackResult = true
+                // 点击回调
+                config.clickCallback && (callbackResult = config.clickCallback.call(this) !== false ? true : false)
+                if (callbackResult && config.url) {
+                    // 跳转支付宝支付
+                    urlJump(config.url + '?' + $.param($.extend({
+                        Token: getMemberToken()
+                    }, config.data)))
+                }
+            })
+        }
+        //#endregion
+
+        //#region 余额支付
+        // 显示支付密码输入框
+        function showPwdConfirm(callback) {
+            Mc.Pc.Pop.Dialog({
+                wrapClass: "md-pop-cotar",
+                popHtml: '<div class="title">支付密码</div>\
+                        <div class="ipt-wrap"><input id="mc_pay_pwd" type="password" class="ipt" placeholder="请输入支付密码"></div>\
+                    <div class="ipt-tip">支付密码默认为登录密码</div>',
+                closeBtn: false,
+                leftBtnCallback: function () {
+                    var pwd = $("#mc_pay_pwd").val()
+                    // 判断不能为空
+                    if (!pwd) {
+                        showTip("请输入支付密码")
+                        return false
+                    }
+                    callback && callback(pwd)
+                }
+            })
+        }
+
+        // 初始化余额支付
+        function initAccountPay() {
+            var config = settings.AccountPayConfig
+            // 余额支付点击事件
+            dom.$sheetGroup.on('click', '.accountpay-item', function () {
+                var callbackResult = true
+                // 点击回调
+                config.clickCallback && (callbackResult = config.clickCallback.call(this) !== false ? true : false)
+                if (callbackResult && config.url) {
+                    showPwdConfirm(function (pwd) {
+                        Mc.Ajax({
+                            id: 'mcAccountPay',
+                            url: config.url,
+                            api: config.api,
+                            data: $.extend({
+                                Password: pwd
+                            }, config.data),
+                            hasLoading: true,
+                            success: config.success,
+                            fail: config.fail,
+                            beforeSend: config.beforeSend
+                        }).then(function (response) {
+                            // 支付成功回调
+                            config.paySuccess && config.paySuccess.call(this, response)
+                        }, function (response) {
+                            showTip(response.description)
+                        })
+                    })
+                }
+            })
+        }
+        //#endregion
+
+        // 隐藏弹出层
+        function show() {
+            var $root = dom.$root
+            if (!$root.hasClass('active')) {
+                $root.removeClass('hide')
+                setTimeout(function () {
+                    $root.addClass('active')
+                }, 10)
+            }
+        }
+
+        // 显示弹出层
+        function hide() {
+            var $root = dom.$root
+            if ($root.hasClass('active')) {
+                $root.removeClass('active')
+                setTimeout(function () {
+                    $root.addClass('hide')
+                }, 300)
+            }
+        }
+
+        // 初始化
+        function init() {
+            var htmlStr = '<div class="mc-pay-pop-wrap hide" ontouchmove="return false">\
+                <div class="mc-pay-actionsheet">\
+                    <div class="sheet-group">' +
+                        (settings.WeChatPay ? '<div class="sheet-item wechatpay-item">' + settings.WeChatPayConfig.text + '</div>' : '') +
+                        (settings.AliPay ? '<div class="sheet-item alipay-item">' + settings.AliPayConfig.text + '</div>' : '') +
+                        (settings.AccountPay ? '<div class="sheet-item accountpay-item">' + settings.AccountPayConfig.text + '<span>（剩余' + settings.AccountPayConfig.nowBalance + '元）</span></div>' : '') +
+                    '</div>\
+                    <div class="sheet-item cancel-btn">取消</div>\
+                </div>\
+                <div class="mc-pay-pop-bg"></div>\
+            </div>'
+
+            dom.$root = $(htmlStr)
+            dom.$sheetGroup = dom.$root.find('.sheet-group')
+            dom.$cancelBtn = dom.$root.find('.cancel-btn')
+            dom.$popBg = dom.$root.find('.mc-pay-pop-bg')
+
+            $('body').append(dom.$root)
+
+            if (settings.WeChatPay) {
+                // 初始化微信支付
+                initWeChatPay()
+            }
+            if (settings.AliPay) {
+                // 初始化支付宝支付
+                initAliPayPay()
+            }
+            if (settings.AccountPay) {
+                // 初始化余额支付
+                initAccountPay()
+            }
+
+            // 取消按钮点击事件
+            dom.$cancelBtn.on('click', function () {
+                hide()
+            })
+            // 背景点击事件
+            dom.$popBg.on('click', function () {
+                hide()
+            })
+        }
+
+        // 调用初始化
+        init()
+
+        // 改变余额
+        this.changeAccountPayBalance = function (newVal) {
+            dom.$root.find('.accountpay-item span').text('（剩余' + newVal + '元）')
+        }
+
+        // 显示弹出层
+        this.show = function () {
+            show()
+        }
+
+        // 隐藏弹出层
+        this.hide = function () {
+            hide()
+        }
+    }
+})();
+//#endregion
 

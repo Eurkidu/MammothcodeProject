@@ -10,6 +10,8 @@
     <meta name="wap-font-scale" content="no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=no" />
     <title>@ViewBag.Title</title>
+    <!-- 将这段代码放在 head 标签内 (禁用指针事件 - 跟iScroll冲突) -->
+    @*<script>window.PointerEvent = void 0</script>*@
     <!--主样式文件-->
     <link href="/Content/Include/css/Main.min.css" rel="stylesheet" />
     <!--JQuery-->
@@ -66,67 +68,37 @@
     </script>
     <style id="html_style"></style>
     <script type="text/javascript">
-        (calMinHeight = function () {
-            var wh = $(window).height();
-            var styleString = "";
-            styleString += ".min-height-cotar{min-height:" + wh + "px}";
-            styleString += ".height-cotar{height:" + wh + "px}";
-            var htmlStyle = $("#html_style")[0];
+        ;(calMinHeight = function () {
+            var wh = $(window).height()
+            var headerHeight = 44 // 可配置
+            var styleString = ""
+            styleString += ".min-height-cotar{min-height:" + wh + "px}"
+            styleString += ".height-cotar{height:" + wh + "px}"
+            styleString += ".content-min-height-cotar{height:" + (wh - headerHeight) + "px}"
+            styleString += ".content-height-cotar{height:" + (wh - headerHeight) + "px}"
+            var htmlStyle = $("#html_style")[0]
             if ('styleSheet' in htmlStyle) {
-                htmlStyle.setAttribute('type', 'text/css');
-                htmlStyle.styleSheet.cssText = styleString;
+                htmlStyle.setAttribute('type', 'text/css')
+                htmlStyle.styleSheet.cssText = styleString
             } else {
-                htmlStyle.innerHTML = styleString;
+                htmlStyle.innerHTML = styleString
             }
-        })();
-        $(window).on("resize", function () {
-            calMinHeight();
-        });
+        })()
+        //$(window).on("resize", function () {
+        //    calMinHeight()
+        //})
     </script>
 </head>
 <body id="body" class="no-scroll height-cotar">
     <!-- pageLoading -->
     <div id="mc_page_loading" class="page-loading-wrap height-cotar" ontouchstart="return false;">
         <div class="vm-cotar">
-            <div class="preloader-wrapper active">
-                <div class="spinner-layer spinner-blue">
-                    <div class="circle-clipper left">
-                        <div class="circle"></div>
-                    </div><div class="gap-patch">
-                        <div class="circle"></div>
-                    </div><div class="circle-clipper right">
-                        <div class="circle"></div>
-                    </div>
+            <div class="mcloading-wrapper active">
+                <div class="mc-circle-loading">
+                    <span class="loading-spinner -white"></span>
                 </div>
-                <div class="spinner-layer spinner-red">
-                    <div class="circle-clipper left">
-                        <div class="circle"></div>
-                    </div><div class="gap-patch">
-                        <div class="circle"></div>
-                    </div><div class="circle-clipper right">
-                        <div class="circle"></div>
-                    </div>
-                </div>
-                <div class="spinner-layer spinner-yellow">
-                    <div class="circle-clipper left">
-                        <div class="circle"></div>
-                    </div><div class="gap-patch">
-                        <div class="circle"></div>
-                    </div><div class="circle-clipper right">
-                        <div class="circle"></div>
-                    </div>
-                </div>
-                <div class="spinner-layer spinner-green">
-                    <div class="circle-clipper left">
-                        <div class="circle"></div>
-                    </div><div class="gap-patch">
-                        <div class="circle"></div>
-                    </div><div class="circle-clipper right">
-                        <div class="circle"></div>
-                    </div>
-                </div>
+                <div class="page-loading-txt">页面加载中..</div>
             </div>
-            <div class="page-loading-txt">页面加载中..</div>
         </div>
     </div>
     <!-- 页面加载失败 -->
@@ -149,7 +121,7 @@
     {
         <div id="header" class="header fbox">
             <div class="tool-btn left-tool">
-                @if (ViewBag.ReturnBackBtn == true)
+                @if (ViewBag.noBackBtn != true)
                 {
                     <i class="ic-return" onclick="doBack()"></i>
                 }
@@ -163,7 +135,7 @@
             </div>
         </div>
     }
-    <div class="wrap">
+    <div class="wrap @(ViewBag.noHeader == true ? "no-header" : "")">
         @RenderBody()
     </div>
     @if (ViewBag.BackToTop == true)
