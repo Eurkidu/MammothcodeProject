@@ -42,6 +42,9 @@
             styleString += ".height-cotar{height:" + wh + "px}"
             styleString += ".content-min-height-cotar{height:" + (wh - headerHeight) + "px}"
             styleString += ".content-height-cotar{height:" + (wh - headerHeight) + "px}"
+            if (typeof window.gPageStyleHook === 'function') {
+                styleString += window.gPageStyleHook(wh, headerHeight)
+            }
             var htmlStyle = $("#html_style")[0]
             if ('styleSheet' in htmlStyle) {
                 htmlStyle.setAttribute('type', 'text/css')

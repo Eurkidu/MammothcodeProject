@@ -8,7 +8,8 @@
     <meta content="telephone=no" name="format-detection">
     <meta content="email=no" name="format-detection">
     <meta name="wap-font-scale" content="no">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=no" />
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
     <title>@ViewBag.Title</title>
     <!--主样式文件-->
     <link href="/Content/Include/css/Main.min.css" rel="stylesheet" />
@@ -20,6 +21,8 @@
     <script src="~/Content/Include/js/json2.js"></script>
     <!-- artTemplate -->
     <script src="/Content/Include/js/template.js"></script>
+    <!-- polyfill -->
+    <script src="/Content/Include/js/polyfill.min.js"></script>
     <!-- 曼码JsLib -->
     <script src="/Content/Include/js/mammothcodeJsLib.min.js"></script>
     <!-- Mc Verify -->
@@ -31,55 +34,50 @@
     <script src="/Content/Include/js/lib/mc.upload/webuploader-0.1.5/webuploader.min.js"></script>
     <script src="/Content/Include/js/lib/mc.upload/mc.uploader.js"></script>
     <!-- swiper -->
-    <link href="/Content/Include/css/swiper-3.3.1.min.css" rel="stylesheet" />
-    <script src="/Content/Include/js/swiper-3.3.1.jquery.min.js"></script>
+    <link href="/Content/Include/css/idangerous.swiper.min.css" rel="stylesheet" />
+    <script src="/Content/Include/js/idangerous.swiper.min.js"></script>
+    @*<link href="/Content/Include/css/swiper.3.4.2.min.css" rel="stylesheet" />
+        <script src="/Content/Include/js/swiper.3.4.2.jquery.min.js"></script>*@
     <!-- lazyload -->
     @*<script src="/Content/include/js/jquery.lazyload.min.js"></script>*@
-    <script type="text/javascript">
-        //页面返回按钮函数钩子
-        var gPageReturnHook = null;
-        //返回
-        function goBack() {
-            //IE 的判断为 history.length > 0
-            //Firefox, Safari, Chrome, webkit 的判断为 history.length > 1
-            //微信中实测为 history.length > 1
-            if (history.length > 1) {
-                history.go(-1)
-            } else {
-                urlJump("/")
-            }
-        }
-        //点击返回按钮
-        function doBack() {
-            if (typeof gPageReturnHook === "function") {
-                gPageReturnHook();
-            } else {
-                goBack();
-            }
-        }
-    </script>
+    <!--[if lt IE 9]>
+        <script src="/Content/include/js/html5.min.js"></script>
+        <script src="/Content/include/js/respond.min.js"></script>
+    <![endif]-->
     <style id="html_style"></style>
     <script type="text/javascript">
-        (calMinHeight = function () {
-            var wh = $(window).height();
-            var styleString = "";
-            styleString += ".min-height-cotar{min-height:" + wh + "px}";
-            styleString += ".height-cotar{height:" + wh + "px}";
-            var htmlStyle = $("#html_style")[0];
+        ; (calMinHeight = function () {
+            var wh = $(window).height()
+            var headerHeight = 44 // 可配置
+            var footerHeight = 0 // 可配置
+            var styleString = ""
+            styleString += ".min-height-cotar{min-height:" + wh + "px}"
+            styleString += ".height-cotar{height:" + wh + "px}"
+            styleString += ".content-min-height-cotar{min-height:" + (wh - headerHeight - footerHeight) + "px}"
+            styleString += ".content-height-cotar{height:" + (wh - headerHeight - footerHeight) + "px}"
+            if (typeof window.gPageStyleHook === 'function') {
+                styleString += window.gPageStyleHook(wh, headerHeight, footerHeight)
+            }
+            var htmlStyle = $("#html_style")[0]
             if ('styleSheet' in htmlStyle) {
-                htmlStyle.setAttribute('type', 'text/css');
-                htmlStyle.styleSheet.cssText = styleString;
+                htmlStyle.setAttribute('type', 'text/css')
+                htmlStyle.styleSheet.cssText = styleString
             } else {
-                htmlStyle.innerHTML = styleString;
+                htmlStyle.innerHTML = styleString
             }
         })();
         $(window).on("resize", function () {
-            calMinHeight();
-        });
+            calMinHeight()
+        })
     </script>
 </head>
-<body id="body" class="no-scroll height-cotar">
-    <div class="wrap">
+<body id="body">
+    @if (ViewBag.noHeader != true)
+    {
+        <div id="header" class="header">
+        </div>
+    }
+    <div class="wrap @(ViewBag.noHeader == true ? "no-header" : "")">
         @RenderBody()
     </div>
     @if (ViewBag.BackToTop == true)

@@ -42,25 +42,27 @@
     //#region 计算rem
     window.calcRem = function () {
         var ua = window.navigator.userAgent;
-        var docEl = document.documentElement;
+        //var docEl = document.documentElement;
         var html = document.querySelector('html');
         var isAndorid = /Android/i.test(ua);
         var dpr = window.devicePixelRatio || 1;
         //var rem = docEl.clientWidth / 10;
-        var rem = $('#h5_wrap').width() / 10;
+        var rem = $('#h5_wrap').width() / 15; // 375宽度下为25px
 
         // 设置 rem 基准值
         html.style.fontSize = rem + 'px';
 
         // Nexus 5 上 rem 值不准，
         // 如：设置100px，getComputedStyle 中的值却为 85px，导致页面错乱
-        // 这时需要检查设置的值和计算后的值是否一样，
+        // 这时需要检查设置的值和计算后的值是否一样
         // 不一样的话重新设置正确的值
-        var getCPTStyle = window.getComputedStyle;
-        var fontSize = parseFloat(html.style.fontSize, 10);
-        var computedFontSize = parseFloat(getCPTStyle(html)['font-size'], 10);
-        if (getCPTStyle && Math.abs(fontSize - computedFontSize) >= 1) {
-            html.style.fontSize = fontSize * (fontSize / computedFontSize) + 'px';
+        var getCptStyle = window.getComputedStyle;
+        if (getCptStyle) {
+            var fontSize = parseFloat(html.style.fontSize, 10);
+            var computedFontSize = parseFloat(getCptStyle(html)['font-size'], 10);
+            if (Math.abs(fontSize - computedFontSize) >= 1) {
+                html.style.fontSize = fontSize * (fontSize / computedFontSize) + 'px';
+            }
         }
 
         // 设置 data-dpr 属性，留作的 css hack 之用
@@ -147,7 +149,7 @@
     //所有场景弹出层
     var $scenePop = $(".h5_pop")
     //显示场景弹出层
-    window.showScenePop = function(idx) {
+    window.showScenePop = function (idx) {
         var $targetPop = $scenePop.eq(idx)
         $targetPop.removeClass("hide").addClass("pop_enter_animate")
             .one(animationEnd, function () {
@@ -156,7 +158,7 @@
             })
     }
     //隐藏场景弹出层
-    window.hideScenePop = function(idx) {
+    window.hideScenePop = function (idx) {
         var $targetPop = $scenePop.eq(idx)
         $targetPop.addClass("pop_leave_animate").one(animationEnd, function () {
             var $this = $(this)
@@ -211,7 +213,7 @@
 
     //#region 配置项
     //前缀
-    var prefix = "AiJiaH5"
+    var prefix = "ProjectName"
     //未登录跳转页面
     var notLoginRedictUrl = "/"
     //获取用户信息请求接口
@@ -692,8 +694,40 @@ window.showConfirm = function (confirmTitle) {
  *     q:季度(1-4)  
  * @return String  
  */
-function dateFormat(date, format) {
-    date = new Date(date * 1000);
+function dateFormat(date, formatStr, netTimeStamp) {
+    if (!date) return '-/-/-'
+    if (typeof date === 'string') {
+        // 去除时区时差影响
+        date = date.replace('T', ' ')
+        // IOS 时间格式兼容性问题
+        date = date.replace(/-/g, '/')
+        date = new Date(date)
+    } else if (typeof date === 'number') {
+        if (netTimeStamp) {
+            // 如果是 .net 时间戳, 单位为秒
+            date = new Date(date * 1000)
+        } else {
+            // 不是则自动判断
+            // 如果 * 1000 后超过 2100/12/31 则自动判断为毫秒时间戳
+            // 否则则自动判断为秒时间戳
+            if (date * 1000 > 4133865600000) {
+                date = new Date(date)
+            } else {
+                date = new Date(date * 1000)
+            }
+        }
+    } else {
+        date = new Date(date)
+    }
+    var week = {
+        '0': '\u65e5',
+        '1': '\u4e00',
+        '2': '\u4e8c',
+        '3': '\u4e09',
+        '4': '\u56db',
+        '5': '\u4e94',
+        '6': '\u516d'
+    }
     var map = {
         "M": date.getMonth() + 1, //月份   
         "d": date.getDate(), //日   
@@ -703,7 +737,7 @@ function dateFormat(date, format) {
         "q": Math.floor((date.getMonth() + 3) / 3), //季度   
         "S": date.getMilliseconds() //毫秒   
     };
-    format = format.replace(/([yMdhmsqS])+/g, function (all, t) {
+    formatStr = formatStr.replace(/([yMdhmsEqS])+/g, function (all, t) {
         var v = map[t];
         if (v !== undefined) {
             if (all.length > 1) {
@@ -711,13 +745,21 @@ function dateFormat(date, format) {
                 v = v.substr(v.length - 2);
             }
             return v;
-        }
-        else if (t === 'y') {
+        } else if (t === 'y') {
             return (date.getFullYear() + '').substr(4 - all.length);
+        } else if (t === 'E') {
+            var w = week[date.getDay()]
+            if (all.length === 1) {
+                return w
+            } else if (all.length === 2) {
+                return '\u5468' + w
+            } else {
+                return '\u661f\u671f' + w
+            }
         }
         return all;
     });
-    return format;
+    return formatStr
 }
 
 //价格处理 - 价格统一处理成2位小数
